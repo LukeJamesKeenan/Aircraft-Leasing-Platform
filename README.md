@@ -1,73 +1,53 @@
-# React + TypeScript + Vite
+# Aircraft Leasing Portfolio & Pricing Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack aircraft leasing analyst tool built in React/Typescript and Excel, designed to mirror the workflows of a lessor's pricing and portoflio risk team.
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This platform consists of three integrated commands:
 
-## React Compiler
+## 1. Portfolio Monitoring Dashboard (React/Typescript)
+- Tracks lease events, maintenance milestones and cash positions across 30/60/180  horizons
+- Fleet-wide KPI summary including high-risk aircraft flags, active leases and maintenance alerts
+- Interactive timeline visualisation per aircraft with clickable event editing
+- CSV export functionality feeding directly into the Excel stress model
+- Built with React, Typescript and Vite
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 2. Aircraft Lease Pricing Engine (Excel & React/Typescript)
+- Lease Rate Factor (LRF) calculator using PMT-based logic
+- Age-adjusted residual value curves across A320ceo, A321ceo, B737-800 and A320neo
+- Sensitivity matrix showing LRF across funding cost and tenor combinations
+- Fleet pricing summary with side-by-side LRF and implied return comparison
+- IRR output using Newton-Raphson XIRR approximation
+- Live pricing calculator integrated into the web dashboard
 
-## Expanding the ESLint configuration
+## 3. Portfolio Lease Downside Stress Engine (Excel)
+- Multi-scenario stress model across a 10-lease portfolio
+- Models redelivery cost exposure across engine shop visits, LLP top-ups and airframe redelivery
+- Probability-weighted expected value (70/20/10 base/downside/severe scenarios)
+- Portfolio benchmarking against current maket LRF with variance analysis
+- Repricing risk flagging across 30/90/180 day and 1/2 year horizons
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## How the System Works
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Pricing model => stress assumptions feed into => Downside Engine => portfolio events feed into => Web Dashboard => CSV export back to => Downside Engine
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Tech Stack
+- React 18. TypeScript, Vite
+- Microsoft Excel (Advanced modelling)
+- Power BI (Dashboard visualisation)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Aircraft Types Covered
+A320ceo | A321ceo | B737-800 | A320neo | A321ne0 | B737-900ER
+
+## Getting Started
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Author
+Luke Keenan | Accounting & Finance Graduate | Certificate in Aviation Leasing & Finance (Law Society of Ireland)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+
