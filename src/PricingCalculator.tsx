@@ -2,7 +2,7 @@ import { useState } from "react";
 import { calculatePricing } from "./Core/engine/PricingEngine";
 import type { PricingInputs, PricingOutputs } from "./Core/engine/PricingEngine";
 
-const aircraftTypes = ["A320ceo", "A321ceo", "B737-800", "A320neo", "A321neo"];
+const aircraftTypes = ["A320ceo", "A321ceo", "B737-800", "A320neo", "A321neo", "ATR 72-600", "Embraer E190", "Embraer E195", "Bombardier Q400"];
 
 const defaultInputs: PricingInputs = {
     aircraftType: "A320ceo",
@@ -52,7 +52,7 @@ export default function PricingCalculator () {
 
                 <label> Aircraft Type
                     <select value={inputs.aircraftType} onChange={e => handleChange("aircraftType", e.target.value)}
-                    style={{ display: "block", width: "100%", padding: "8px", marginTop: "4px" }}>
+                    style={{ display: "block", width: "100%", padding: "8px", marginTop: "4px", fontSize: "16px" }}>
                         {aircraftTypes.map(t => <option key={t}>{t}</option>)}
                     </select>
                 </label>

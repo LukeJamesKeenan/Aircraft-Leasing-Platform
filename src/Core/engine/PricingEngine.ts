@@ -26,6 +26,10 @@ const depreciationRates: Record<string, { newBuildValue: number; annualDepRate: 
     "B737-800": {newBuildValue: 48000000, annualDepRate: 0.0475, residualFloor: 0.15},
     "A320neo": {newBuildValue: 70000000, annualDepRate: 0.035, residualFloor: 0.15},
     "A321neo": {newBuildValue: 78000000, annualDepRate: 0.033, residualFloor: 0.15},
+    "ATR 72-600": {newBuildValue: 28000000, annualDepRate: 0.055, residualFloor: 0.15},
+    "Embraer E190": {newBuildValue: 32000000, annualDepRate: 0.050, residualFloor: 0.15},
+    "Embraer E195": {newBuildValue: 36000000, annualDepRate: 0.050, residualFloor: 0.15},
+    "Bombardier Q400": {newBuildValue: 26000000, annualDepRate: 0.0575, residualFloor: 0.15},
 };
 
 // Calculate age-adjusted residual value
