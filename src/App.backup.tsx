@@ -15,7 +15,6 @@ import type { LeaseInput } from "./Core/engine/models/LeaseInput";
 import { buildLeaseRiskTable } from "./Core/engine/buildLeaseRiskTable";
 import { exportToCSV } from "./Core/engine/exportToCSV";
 import PricingCalculator from "./PricingCalculator";
-import './App.css'
 
 function App() {
 
@@ -181,62 +180,118 @@ function App() {
   ).length;
 
   return (
-    <div>
-      {/* App Header */}
-      <header className="app-header">
-        <div className="app-logo">
-          <div className="app-logo-icon">FL</div>
-          <span className="app-logo-text">LeasePlatform</span>
-          <span className="app-logo-badge">Beta</span>
-        </div>
-        <div className="app-header-right">
-          <span>{new Date().toLocaleDateString("en-IE")}</span>
-          <span>Analyst · Portfolio Team </span>
-        </div>
-      </header>
+    <div style={{ padding: "20px", fontFamily: "arial", marginTop: "0" }} >
+      <h1>Portfolio Timeline (Prototype)</h1>
 
-      {/* Tab Navigation */}
-      <nav className="tab-nav">
+      <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
         <button
-        className={`tab-btn ${activeTab === "portfolio" ? "active" : ""}`}
-        onClick={() => setActiveTab("portfolio")}>
-          Portfolio Timeline
-        </button>
-        <button
-        className={`tab-btn ${activeTab === "pricing" ? "active" : ""}`}
-        onClick={() => setActiveTab("pricing")}>
-          Pricing Calculator
-        </button>
-      </nav>
-
-      <div className="app-content">
+        onClick={() => setActiveTab("portfolio")}
+        style={{ padding: "8px 16px", backgroundColor: activeTab === "portfolio" ? "#2563eb" : "#f0f0f0",
+          color: activeTab === "portfolio" ? "white" : "black", border: "none",
+          borderRadius: "6px", cursor: "pointer", fontWeight: "500" }}>
+            Portfolio Timeline
+          </button>
+          <button
+          onClick={() => setActiveTab("pricing")}
+          style={{ padding: "8px 16px", backgroundColor: activeTab === "pricing" ? "#2563eb" : "#f0f0f0",
+            color: activeTab === "pricing" ? "white" : "black", border: "none",
+            borderRadius: "6px", cursor: "pointer", fontWeight: "500" }}>
+              Pricing Calculator
+            </button>
+      </div>
 
       {activeTab === "pricing" && <PricingCalculator />}
       {activeTab === "portfolio" && (
       <div>
 
-      <div className="toolbar">
-        <div className="toolbar-left">
-          <button className="export-btn" onClick={() => {
-            const rows = buildLeaseRiskTable();
-            exportToCSV(rows, "lease_risk_table.csv");
-          }}>
-            Export Lease Risk CSV
-          </button>
+      <button
+      onClick={() => {
+        const rows = buildLeaseRiskTable();
+        exportToCSV(rows, "lease_risk_table.csv");
+      }}
+      style={{
+        marginBottom: "12px",
+        padding: "6px 12px",
+        borderRadius: "8px",
+        border: "1px solid #e5e7eb",
+        backgroundColor: "#2563eb",
+        color: "white",
+        cursor: "pointer",
+        fontWeight: "500",
+      }}
+    >
+      Export Lease Risk CSV
+    </button>
+
+      <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: "12px",
+        padding: "10px 12px",
+        backgroundColor: "#f3f4f6",
+        borderRadius: "12px",
+        border: "1px solid #e5e7eb",
+      }}
+    >
+      {/* Left side of header */}
+      <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+        <div style={{ fontSize: "12px", color: "#6b7280" }}>
+          HORIZON: <strong>{horizon} days</strong>
+        </div>
+
+        <div style={{ fontSize: "12px", color: "#6b7280" }}>
+          view: <strong>{eventFilter}</strong>
         </div>
       </div>
 
+      {/* Right side of header */}
+      <div style={{ fontSize: "12px", color: "#6b7280" }}>
+        {new Date().toLocaleDateString("en-IE")}
+      </div>
+
+      <div
+      style={{
+        fontSize: "12px",
+        color: "#111827",
+        fontWeight: "600",
+      }}
+    >
+      Analyst • Portfolio Team
+    </div>
+  </div>
+
       <TimelineControls horizon={horizon} setHorizon={setHorizon} />
 
-      <div style ={{ display: "flex", gap: "6px", marginBottom: "12px" }}>
+      <div
+       style={{
+        marginBottom: "12px",
+        display: "flex",
+        gap: "6px",
+        backgroundColor: "#f3f4f6",
+        padding: "6px",
+        borderRadius: "10px",
+        width: "fit-content",
+       }}
+      >
         {["all", "lease", "maintenance", "cash"].map(type => (
           <button
-          key={type}
-          onClick={() => setEventFilter(type)}
-          className={`filter-btn ${eventFilter === type ? "active" : ""}`}
-          >
-            {type}
-          </button>
+           key={type}
+           onClick={() =>setEventFilter(type)}
+           style={{
+            padding: "6px 12px",
+            borderRadius: "8px",
+            border: "none",
+            backgroundColor: eventFilter === type ? "#2563eb" : "white",
+            color: eventFilter === type ? "white" : "#111827",
+            cursor: "pointer",
+            fontWeight: "500",
+            textTransform: "capitalize",
+           }}
+        >
+          {type}
+        </button>
         ))}
       </div>
 
@@ -249,17 +304,62 @@ function App() {
       >
 
         {/*LEFT COLUMN: Aircraft List */}  
-        <div className="aircraft-list">
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+            padding: "6px",
+            backgroundColor: "#eff2f6",
+            borderRadius: "14px",
+            boxShadow: "inset 0 1px 2px rgba(0,0,0,0.05)",
+          }}
+        >
           {aircraft.map((reg) => (
             <div
-            key={reg}
-            onClick={() => setSelectedAircraft(prev => prev === reg ? null : reg)}
-            className={`aircraft-item ${selectedAircraft === reg ? "selected" : ""}`}
-            >
-              <span>{reg}</span>
-          </div>
+             key={reg}
+             onClick={() =>
+              setSelectedAircraft(prev =>
+                prev === reg ? null : reg
+              )
+             }
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow =
+                 "0 4px 10px rgba(0,0,0,0.12)";
+              }}
+
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow =
+                "0 1px 4px rgba(0,0,0,0.06)";
+              }}
+
+             style={{
+              border: 
+               selectedAircraft === reg
+                ? "2px solid #2563eb"
+                : "1px solid #e5e7eb",
+              borderRadius: "10px",
+              padding: "10px 12px",
+              height: "80px",
+              display: "flex",
+              alignItems: "center",
+              backgroundColor:
+               selectedAircraft === reg ? "#eff6ff" : "white",
+              boxShadow:
+               selectedAircraft === reg
+                ? "0 4px 10px rgba(37,99,235,0.15)"
+                : "0 1px 4px rgba(0,0,0,0.06)",
+              cursor: "pointer",
+             }}
+
+             >
+              <span style={{ fontWeight: "600", color: "#111827" }}>
+              {reg}
+              </span>
+             </div>
+
           ))}
-        </div>
+          </div>
       
 
         {/*RIGHT COLUMN: Aircraft Timelines */}
@@ -374,8 +474,21 @@ function App() {
         
         {/* Right-hand Edit Sidebar */}
         {selectedEvent && (
-          <div className="event-sidebar">
-            <div className="event-sidebar-title">Event Record</div>
+          <div
+            style={{
+              position: "fixed",
+              top: "80px",
+              right: "20px",
+              width: "300px",
+              border: "1px solid #ddd",
+              borderRadius: "10px",
+              backgroundColor: "white",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+              padding: "12px",
+              zIndex: 1000,
+            }}
+          >
+            <h3 style={{ marginTop: 0}}>Event Record</h3>
 
             <div style={{ marginBottom: "8px"}}>
               <label style={{ fontSize: "12px", color: "#666" }}>Aircraft</label>
@@ -539,21 +652,35 @@ function App() {
                 justifyContent: "space-between",
               }}
             >
-              <button className="btn-close" onClick={() => setSelectedEvent(null)}>
+              <button
+                onClick={() => setSelectedEvent(null)}
+                style={{ backgroundColor: "#f3f4f6"}}
+              >
                 Close
               </button>
 
-              <button className="btn-save" onClick={() => {
-                setEvents(events.map(ev => ev === selectedEvent ? editEvent : ev));
-                setSelectedEvent(null);
-              }}>
+              <button
+                onClick={() => {
+                  setEvents(
+                    events.map(ev =>
+                      ev === selectedEvent ? editEvent: ev
+                    )
+                  );
+                  setSelectedEvent(null);
+                }}
+                  
+                style={{ backgroundColor: "#2563eb", color: "white" }}
+              >
                 Save
               </button>
 
-              <button className="btn-delete" onClick={() => {
-                setEvents(events.filter(ev => ev !== selectedEvent));
-                setSelectedEvent(null);
-              }}>
+              <button
+                onClick={() => {
+                  setEvents(events.filter(ev => ev !== selectedEvent));
+                  setSelectedEvent(null);
+                }}
+                style={{ backgroundColor: "#ef4444", color: "white" }}
+              >
                 Delete
               </button>
             </div>
@@ -562,14 +689,43 @@ function App() {
 
 
         {/* Timeline Box */}
-        <div className="timeline-container" style={{ position: "relative", overflow: "visible" }}>
+        <div
+         style={{
+          border: "1px solid #e5e7eb",
+          borderRadius: "14px",
+          minHeight: "600px",
+          padding: "14px",
+          position: "relative",
+          backgroundColor: "white",
+          boxShadow: "0 4px 10px rgba(0,0,0,0.06)",
+          overflow: "visible",
+         }}
+         >
 
         {/* Vertical Grid Lines */}
-        <div style={{ position: "absolute", top: "0", left: "0", right: "0", bottom: "0",
-          display: "grid", gridTemplateColumns: "repeat(6, 1fr)", pointerEvents: "none",
-          paddingLeft: "4%", paddingRight: "4%" }}>
+        <div
+         style={{
+          position: "absolute",
+          top: "0",
+          left: "0",
+          right: "0",
+          bottom: "0",
+          display: "grid",
+          gridTemplateColumns: "repeat(6, 1fr)",
+          pointerEvents: "none",
+          paddingLeft: "4%",
+          paddingRight: "4%",
+         }}
+         >
           {[0, 1, 2, 3, 4, 5].map((i) => (
-            <div key={i} style={{ borderRight: "1px dashed var(--border)", height: "100%", opacity: "0.5" }} />
+          <div
+           key={i}
+           style={{
+            borderRight: "1px dashed #e5e7eb",
+            height: "100%",
+            opacity: "0.35",
+           }}
+          />
           ))}
         </div>
 
@@ -606,7 +762,6 @@ function App() {
     </div>
   </div>
   )}
-</div>
 </div>
 );
 }

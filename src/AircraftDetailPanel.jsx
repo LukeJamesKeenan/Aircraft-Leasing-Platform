@@ -1,167 +1,100 @@
 function AircraftDetailPanel({ selectedAircraft, events }) {
     if (!selectedAircraft) {
         return (
-            <div
-            style={{
-                border: "1px solid #e5e7eb",
-                borderRadius: "14px",
-                padding: "14px",
-                backgroundColor: "white",
-                marginBottom: "12px",
-            }}
-        >
-            <div style={{ fontWeight: "600", marginBottom: "6px" }}>
-                Aircraft Profile
+            <div className="action-panel" style={{ marginBottom: "12px" }}>
+                <div className="action-panel-title">Aircraft Profile</div>
+                <div style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
+                    Click an aircraft on the left to see its profile.
+                </div>
             </div>
-            <div style={{ color: "#6b7280", fontSize: "12px" }}>
-                Click an aircraft on the left to see its profile.
-            </div>
-        </div>
         );
     }
 
-    // Filter events for this aircraft only
-    const aircraftEvents = events.filter(
-        (e) => e.aircraft === selectedAircraft
-    );
-
-    // Next upcoming event (earliest day)
-    const nextEvent =
-    aircraftEvents.length > 0
-    ? [...aircraftEvents].sort((a, b) => a.day -b.day)[0]
+    const aircaftEvents = events.filter(e => e.aircraft === selectedAircraft);
+    const nextEvent = aircaftEvents.length > 0
+    ? [...aircaftEvents].sort((a,b) => a.day - b.day)[0]
     : null;
-
-    // Most urgent high-risk event
-    const highRiskEvent = aircraftEvents
-    .filter((e) => e.risk === "High")
+    const highRiskEvent = aircaftEvents
+    .filter(e => e.risk === "High")
     .sort((a, b) => a.day - b.day)[0];
-
-    const isIdle = aircraftEvents.length === 0;
+    const isIdle =aircaftEvents.length === 0;
 
     return (
-        <div
-        style={{
-            border: "1px solid #e5e7eb",
-            borderRadius: "14px",
-            padding: "14px",
-            backgroundColor: "white",
-            marginBottom: "12px",
-        }}
-    >
-        <div
-        style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "10px",
-        }}
-    >
-        <div style={{ fontWeight: "600" }}>
-            Aircraft Profile - {selectedAircraft}
-        </div>
-
-        {/* ACTIVE / IDLE BADGE */}
-        <div
-        style={{
-            fontSize: "12px",
-            padding: "4px 10px",
-            borderRadius: "999px",
-            backgroundColor: isIdle ? "#f3f4f6" : "#ecfeff",
-            color: isIdle ? "#6b7280" : "#0f766e",
-            border: isIdle
-            ? "1px solid #e5e7eb"
-            : "1px solid #67e8f9",
-        }}
-    >
-        {isIdle ? "Idle in horizon" : "Active in horizon"}
-    </div>
-</div>
-
-    {/* RISK SUMMARY */}
-    <div style={{marginBottom: "10px" }}>
-        <div
-        style={{
-            fontSize: "12px",
-            color: "#6b7280",
-            marginBottom: "4px",
-        }}
-    >
-        Risk snapshot
-    </div>
-
-    {highRiskEvent ? (
-        <div
-        style={{
-            backgroundColor: "#fef2f2",
-            border: "1px solid #fecaca",
-            borderRadius: "10px",
-            padding: "8px 10px",
-            fontSize: "12px",
-        }}
-    >
-        <strong>Hish-risk upcoming</strong>{" "}
-        Day {highRiskEvent.day} - {highRiskEvent.type}
-        {highRiskEvent.description
-        ? ` (${highRiskEvent.description})`
-        : ""}
-        </div>
-    ) : (
-        <div
-        style={{
-            backgroundColor: "#f0fdf4",
-            border: "1px solid #bbf7d0",
-            borderRadius: "10px",
-            padding: "8px 10px",
-            fontSize: "12px",
-        }}
-    >
-        No high-risk events scheduled
-        </div>
-    )}
-    </div>
-
-    {/* NEXT KEY EVENT */}
-    <div>
-        <div
-        style={{
-            fontSize: "12px",
-            color: "#6b7280",
-            marginBottom: "4px",
-        }}
-    >
-        Next key event
-        </div>
-
-        {nextEvent ? (
-            <div
-            style={{
-                backgroundColor: "#eff6ff",
-                border: "1px solid #bfdbfe",
-                borderRadius: "10px",
-                padding: "8px 10px",
-                fontSize: "12px",
-            }}
-        >
-            Day {nextEvent.day} -{" "}
-            <strong>{nextEvent.type}</strong>
-            {nextEvent.description
-            ? ` • ${nextEvent.description}`
-            : ""}
+        <div className="action-panel" style={{ marginBottom: "12px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px "}}>
+                <div className="action-panel-title" style={{ marginBottom: 0 }}>
+                    Aircraft Profile - {selectedAircraft}
+                </div>
+                <div style={{
+                    fontSize: "11px",
+                    padding: "3px 10px",
+                    borderRadius: "999px",
+                    backgroundColor: isIdle ? "var(--bg-secondary)" : "rgba(16, 185, 129, 0.1)",
+                    color: isIdle ? "var(--text-muted)" : "var(--green)",
+                    border: isIdle ? "1px solid var(--border)" : "1px solid rgba(16, 185, 129, 0.3)",
+                }}>
+                    {isIdle ? "Idle in horizon" : "Active in horizon"}
+                </div>
             </div>
-        ) : (
-            <div
-            style={{
-                backgroundColor: "#f3f4f6",
-                border: "1px solid #e5e7eb",
-                borderRadius: "10px",
-                padding: "8px 10px",
-                fontSize: "12px",
-                color: "#6b7280",
-            }}
-        >
-            No upcoming events recorded
+
+            <div style={{ marginBottom: "10px" }}>
+                <div style={{ fontSize: "11px", color: "var(--text-muted)", marginBottom: "6px", fontWeight: "600", letterSpacing: "0.06em", textTransform: "uppercase"}}>
+                    Risk Snapshot
+                </div>
+                {highRiskEvent ? (
+                    <div style={{
+                        backgroundColor: "rgba(239, 68, 68, 0.1)",
+                        border: "1px solid rgba(239, 68, 68, 0.3)",
+                        borderRadius: "8px",
+                        padding: "8px 12px",
+                        color: "var(--text-primary)",
+                    }}>
+                        <strong style={{ color: "var(--red)" }}>High-risk upcoming</strong>{""}
+                        - Day {highRiskEvent.day} · {highRiskEvent.type}
+                        {highRiskEvent.description ? ` (${highRiskEvent.description})` : ""}
+                    </div>
+                ) : (
+                    <div style={{
+                        backgroundColor: "rgba(16, 185, 129, 0.1)",
+                        border: "1px solid rgba(16, 185, 129, 0.3)",
+                        borderRadius: "8px",
+                        padding: "8px 12px",
+                        fontSize: "12px",
+                        color: "var(--green)",
+                    }}>
+                        No high-risk events scheduled
+                    </div>
+                )}
             </div>
-        )}
+
+            <div>
+                <div style={{ fontSize: "11px", color: "var(--text-muted)", marginBottom: "6px", fontWeight: "600", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                    Next Key Event
+                </div>
+                {nextEvent ? (
+                    <div style={{
+                    backgroundColor: "var(--accent-glow)",
+                    border: "1px solid var(--accent)",
+                    borderRadius: "8px",
+                    padding: "8px 12px",
+                    fontSize: "12px",
+                    color: "var(--text-primary)",
+                }}>
+                    Day {nextEvent.day} - <strong>{nextEvent.type}</strong>
+                    {nextEvent.description ? ` · ${nextEvent.description}` : ""}
+                </div>
+            ) : (
+                <div style={{
+                    backgroundColor: "var(--bg-secondary)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px",
+                    padding: "8px 12px",
+                    fontSize: "12px",
+                    color: "var(--text-secondary)",
+                }}>
+                    No upcoming events recorded
+                </div>
+            )}
         </div>
         </div>
     );
