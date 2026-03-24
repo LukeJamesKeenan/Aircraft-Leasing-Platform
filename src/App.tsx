@@ -15,6 +15,7 @@ import type { LeaseInput } from "./Core/engine/models/LeaseInput";
 import { buildLeaseRiskTable } from "./Core/engine/buildLeaseRiskTable";
 import { exportToCSV } from "./Core/engine/exportToCSV";
 import PricingCalculator from "./PricingCalculator";
+import CreditRisk from "./CreditRisk";
 import './App.css'
 
 function App() {
@@ -39,7 +40,7 @@ function App() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [editEvent, setEditEvent] = useState(null);
   const [selectedAircraft, setSelectedAircraft] = useState(null);
-  const [activeTab, setActiveTab] = useState<"portfolio" | "pricing">("portfolio");
+  const [activeTab, setActiveTab] = useState<"portfolio" | "pricing" | "credit">("portfolio");
   
   const aircraft = [
     "EI-ABC",
@@ -207,11 +208,18 @@ function App() {
         onClick={() => setActiveTab("pricing")}>
           Pricing Calculator
         </button>
+
+        <button
+        className={`tab-btn ${activeTab === "credit" ? "active" : ""}`}
+        onClick={() => setActiveTab("credit")}>
+          Credit Risk
+        </button>
       </nav>
 
       <div className="app-content">
 
       {activeTab === "pricing" && <PricingCalculator />}
+      {activeTab === "credit" && <CreditRisk />}
       {activeTab === "portfolio" && (
       <div>
 
