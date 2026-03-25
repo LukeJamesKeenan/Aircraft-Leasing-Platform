@@ -13,9 +13,15 @@ const defaultInputs: PricingInputs = {
     targetReturnSpread: 0.01,
 };
 
-export default function PricingCalculator () {
+interface PricingCalculatorProps {
+    onAddToPortfolio?: (aircraftType: string, registration: string, lessee: string, monthlyRent: number, tenorYears: number) => void;
+}
+export default function PricingCalculator ({ onAddToPortfolio }: PricingCalculatorProps) {
     const [inputs, setInputs] = useState<PricingInputs>(defaultInputs);
     const [outputs, setOutputs] = useState<PricingOutputs | null>(null);
+    const [showAddForm, setShowAddForm] = useState(false);
+    const [registration, setRegistration] = useState("");
+    const [lessee, setLessee] = useState("");
 
     function handleChange(field: keyof PricingInputs, value: string) {
         setInputs((prev) => ({
@@ -117,6 +123,45 @@ export default function PricingCalculator () {
                     ) : (
                         <div className="output-placeholder">
                             Enter deal parameters and click <strong style={{ color: "var(--accent-bright)" }}>Calculate Pricing</strong> to generate outputs
+                        </div>
+                    )}
+                    {outputs && onAddToPortfolio && (
+                        <div style={{ marginTop: "20px", paddingTop: "16px", borderTop: "1px solid var(--border)" }}>
+                            {!showAddForm ? (
+                                <button className="calculate-btn" onClick={() => setShowAddForm(true)}>
+                                    + Add to Portfolio
+                                </button>
+                            ) : (
+                                <div>
+                                    <div className="pricing-title">Add to Portfolio</div>
+                                    <div className="form-field">
+                                        <label className="form-label">Aircraft Registration</label>
+                                        <input className="form-input" type="text" placeholder="e.g. EI-XYZ"
+                                        value={registration} onChange={e => setRegistration(e.target.value)} />
+                                        </div>
+                                        <div className="form-field">
+                                            <label className="form-label">Lessee</label>
+                                            <input className="form-input" type="text" placeholder="e.g. Ryanair"
+                                            value={lessee} onChange={e => setLessee(e.target.value)} />
+                                        </div>
+                                        <button className="calculate-btn" onClick={() => {
+                                            if (registration && lessee && outputs) {
+                                                onAddToPortfolio(
+                                                    inputs.aircraftType,
+                                                    registration,
+                                                    lessee,
+                                                    Math.round(outputs.monthlyRent),
+                                                    inputs.leaseTenorYears
+                                                );
+                                                setShowAddForm(false);
+                                                setRegistration("");
+                                                setLessee("");
+                                            }
+                                        }}>
+                                            Confirm - Add to Portfolio
+                                        </button>
+                                    </div>
+                            )}
                         </div>
                     )}
                 </div>

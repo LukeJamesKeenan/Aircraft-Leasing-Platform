@@ -42,13 +42,7 @@ function App() {
   const [selectedAircraft, setSelectedAircraft] = useState(null);
   const [activeTab, setActiveTab] = useState<"portfolio" | "pricing" | "credit">("portfolio");
   
-  const aircraft = [
-    "EI-ABC",
-    "EI-DEF",
-    "EI-GHI",
-    "EI-JKL",
-    "EI-MNO",
-  ];
+  const [aircraft, setAircraft] = useState(["EI-ABC", "EI-DEF", "EI-GHI", "EI-JKL", "EI-MNO"]);
 
   const defaultEvents = [
     {
@@ -118,6 +112,24 @@ function App() {
         notes: ""
       }));
   });
+
+  const addPriceDeal = (aircraftType: string, registration: string, lessee: string, monthlyRent: number, tenorYears: number) => {
+    const newLease = {
+      aircraft: registration,
+      day: 0,
+      type: "lease",
+      msn: "TBD",
+      lessee: lessee,
+      lesseeStatus: "Active",
+      maintenaceCategory: "",
+      description: `${aircraftType} - LRF priced via Pricing Calculator`,
+      risk: "Low",
+      notes: `Monthly Rent: €${monthlyRent.toLocaleString()} | Tenor: ${tenorYears} years`,
+    };
+    setEvents(prev => [...prev, newLease].sort((a,b) => a.day - b.day));
+    setAircraft(prev => prev.includes(registration) ? prev : [...prev, registration]);
+    setActiveTab("portfolio");
+    };
 
   const addEvent = () => {
     const eventToAdd = {
@@ -218,7 +230,7 @@ function App() {
 
       <div className="app-content">
 
-      {activeTab === "pricing" && <PricingCalculator />}
+      {activeTab === "pricing" && <PricingCalculator onAddToPortfolio={addPriceDeal} />}
       {activeTab === "credit" && <CreditRisk />}
       {activeTab === "portfolio" && (
       <div>
