@@ -17,6 +17,7 @@ import { exportToCSV } from "./Core/engine/exportToCSV";
 import PricingCalculator from "./PricingCalculator";
 import CreditRisk from "./CreditRisk";
 import Remarketing from "./Remarketing";
+import TransactionDatabase from "./TransactionDatabase";
 import './App.css'
 
 function App() {
@@ -41,7 +42,7 @@ function App() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [editEvent, setEditEvent] = useState(null);
   const [selectedAircraft, setSelectedAircraft] = useState(null);
-  const [activeTab, setActiveTab] = useState<"portfolio" | "pricing" | "credit" | "remarketing">("portfolio");
+  const [activeTab, setActiveTab] = useState<"portfolio" | "pricing" | "credit" | "remarketing" | "transactions">("portfolio");
   
   const [aircraft, setAircraft] = useState(["EI-ABC", "EI-DEF", "EI-GHI", "EI-JKL", "EI-MNO"]);
 
@@ -233,6 +234,12 @@ function App() {
         onClick={() => setActiveTab("remarketing")}>
           Remarketing
         </button>
+        
+        <button
+        className={`tab-btn ${activeTab === "transactions" ? "active" : ""}`}
+        onClick={() => setActiveTab("transactions")}>
+          Transactions
+        </button>
       </nav>
 
       <div className="app-content">
@@ -240,6 +247,7 @@ function App() {
       {activeTab === "pricing" && <PricingCalculator onAddToPortfolio={addPriceDeal} />}
       {activeTab === "credit" && <CreditRisk />}
       {activeTab === "remarketing" && <Remarketing />}
+      {activeTab === "transactions" && <TransactionDatabase />}
       {activeTab === "portfolio" && (
       <div>
 
