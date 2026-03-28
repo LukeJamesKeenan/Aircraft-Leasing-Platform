@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface CreditInputs {
     airlineName: string;
@@ -114,13 +114,20 @@ function generateSummary(inputs: CreditInputs, scores: ReturnType<typeof calcula
     return `${inputs.airlineName || "This lessee"} has been assessed as ${rating.label} with an overall score of ${scores.total.toFixed(1)}/100. ${strengthText} ${weaknessText} ${rating.label === "HIGH RISK" ? "Enhanced due diligence and additional security provisions are recommended before proceeding." : rating.label === "MEDIUM RISK" ? "Standard due diligence is recommended with close monitoring of financial performance." : "Standard lease terms are appropriate subject to final legal and financial review."}`;
 }
 
-export default function CreditRisk() {
-    const [inputs, setInputs] = useState<CreditInputs>(defaultInputs);
+export default function CreditRisk({ prefillLessee = "", onClearPrefill }: { prefillLessee?: string; onClearPrefill?: () => void }) {
+    const [inputs, setInputs] = useState<CreditInputs>({ ...defaultInputs, airlineName: prefillLessee });
     const [result, setResult] = useState<ReturnType<typeof calculateScore> | null>(null);
 
     function handleChange(field: keyof CreditInputs, value: string) {
         setInputs(prev => ({ ...prev, [field]: value }));
     }
+
+    useEffect(() => {
+        if (prefillLessee) {
+            setInputs(prev => ({ ...prev, airlineName: prefillLessee }));
+            if (onClearPrefill) onClearPrefill();
+        }
+    }, [prefillLessee]);
 
     function handleAssess() {
         setResult(calculateScore(inputs));

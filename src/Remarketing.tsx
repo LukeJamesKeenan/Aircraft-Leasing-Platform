@@ -67,7 +67,7 @@ function getRiskScore(lease: LeaseEntry): number {
     return Math.min(score, 100);
 }
 
-export default function Remarketing() {
+export default function Remarketing({ onSelectLessee }: {onSelectLessee: (name: string) => void }) {
     const [leases, setLeases] = useState<LeaseEntry[]>(defaultLeases);
     const [showAddForm, setShowAddForm] = useState(false);
     const [newLease, setNewLease] = useState<LeaseEntry>({
@@ -208,8 +208,11 @@ return (
                         <div style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
                             {lease.aircraftType}
                         </div>
-                        <div style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
-                            {lease.lessee}
+                        <div 
+                        onClick={() => onSelectLessee(lease.lessee)}
+                        style= {{ fontSize: "12px", color: "var(--accent-bright)", cursor: "pointer", textDecoration: "underline" }}
+                    >
+                        {lease.lessee}
                         </div>
                         <div style={{ fontFamily: "var(--font-mono)", fontSize: "13px", fontWeight: "600", color: light.color }}>
                             {days}d

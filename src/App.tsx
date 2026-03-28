@@ -43,6 +43,7 @@ function App() {
   const [editEvent, setEditEvent] = useState(null);
   const [selectedAircraft, setSelectedAircraft] = useState(null);
   const [activeTab, setActiveTab] = useState<"portfolio" | "pricing" | "credit" | "remarketing" | "transactions">("portfolio");
+  const [creditPrefill, setCreditPrefill] = useState("");
   
   const [aircraft, setAircraft] = useState(["EI-ABC", "EI-DEF", "EI-GHI", "EI-JKL", "EI-MNO"]);
 
@@ -245,8 +246,8 @@ function App() {
       <div className="app-content">
 
       {activeTab === "pricing" && <PricingCalculator onAddToPortfolio={addPriceDeal} />}
-      {activeTab === "credit" && <CreditRisk />}
-      {activeTab === "remarketing" && <Remarketing />}
+      {activeTab === "credit" && <CreditRisk prefillLessee={creditPrefill} onClearPrefill={() => setCreditPrefill("")} />}
+      {activeTab === "remarketing" && <Remarketing onSelectLessee={(name) => { setCreditPrefill(name); setActiveTab("credit"); }} />}
       {activeTab === "transactions" && <TransactionDatabase />}
       {activeTab === "portfolio" && (
       <div>
