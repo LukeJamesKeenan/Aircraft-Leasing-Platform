@@ -41,6 +41,32 @@ function getTrafficLight(daysToExpiry: number, status: string) : { color: string
     return { color: "var(--green)", label: "On Track" };
 }
 
+function getRiskScore(lease: LeaseEntry): number {
+    const days = getDaysToExpiry(lease.tenorYears);
+    let score =0;
+
+    // Days to expiry (max 50pts)
+    if (days <=90) score +=50;
+    else if (days <=180) score +=40;
+    else if (days <=365) score +=25;
+    else if (days <=730) score +=10;
+
+    // Status (max 30pts)
+    if (lease.status === "At Risk") score +=30;
+    else if (lease.status === "Remarketing") score +=20;
+    else if (lease.status === "Monitoring") score +=10;
+    else if (lease.status === "Renewal Negotiation") score +=5;
+
+    // Aircraft type demand (max 20pts) - narrowbodies score lower risk
+    const highDemand = ["A320neo", "A321neo", "B737 MAX 8"];
+    const medDemand = ["A320ceo", "A321ceo", "B737-800"];
+    if (highDemand.includes(lease.aircraftType)) score += 0;
+    else if (medDemand.includes(lease.aircraftType)) score += 10;
+    else score += 20;
+
+    return Math.min(score, 100);
+}
+
 export default function Remarketing() {
     const [leases, setLeases] = useState<LeaseEntry[]>(defaultLeases);
     const [showAddForm, setShowAddForm] = useState(false);
@@ -106,7 +132,7 @@ return (
         </div>
 
         {/* Pipeline Table */}
-        <div className="pricing-form-card" style={{ maxWidth: "900px", marginBottom: "16px" }}>
+        <div className="pricing-form-card" style={{ maxWidth: "1500px", marginBottom: "16px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
                 <div className="pricing-title" style={{ marginBottom: 0 }}>Lease Expiry Pipeline</div>
                 <button className="export-btn" onClick={() => setShowAddForm(!showAddForm)}>
@@ -160,8 +186,8 @@ return (
             )}
 
             {/* Table Header */}
-            <div style={{ display: "grid", gridTemplateColumns: "110px 120px 140px 90px 160px 1fr", gap: "12px", padding: "8px 12px", borderBottom: "1px solid var(--border)", marginBottom: "4px" }}>
-                {["Registration", "Type", "Lessee", "Days Left", "Status", "Recommendation"].map(h => (
+            <div style={{ display: "grid", gridTemplateColumns: "110px 120px 140px 90px 90px 160px 2fr", gap: "12px", padding: "8px 12px", borderBottom: "1px solid var(--border)", marginBottom: "4px" }}>
+                {["Registration", "Type", "Lessee", "Days Left", "Risk Score", "Status", "Recommendation"].map(h => (
                     <div key={h} style={{ fontSize: "10px", fontWeight: "600", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text-muted)" }}>{h}</div>
                 ))}
             </div>
@@ -171,9 +197,11 @@ return (
                 const days = getDaysToExpiry(lease.tenorYears);
                 const light = getTrafficLight(days, lease.status);
                 const recommendation = getRecommendation(days, lease.status);
+                const riskScore = getRiskScore(lease);
+                const riskColor = riskScore >= 70 ? "var(--red)" : riskScore >= 40 ? "var(--amber)" : "var(--green)";
 
                 return (
-                    <div key={lease.registration} style={{ display: "grid", gridTemplateColumns: "110px 120px 140px 90px 160px 1fr", gap: "12px", padding: "12px", borderBottom: "1px solid var(--border)", alignItems: "center" }}>
+                    <div key={lease.registration} style={{ display: "grid", gridTemplateColumns: "110px 120px 140px 90px 90px 160px 2fr", gap: "12px", padding: "12px", borderBottom: "1px solid var(--border)", alignItems: "center" }}>
                         <div style={{ fontFamily: "var(--font-mono)", fontSize: "13px", fontWeight: "600", color: "var(--text-primary)"}}>
                             {lease.registration}
                         </div>
@@ -185,6 +213,9 @@ return (
                         </div>
                         <div style={{ fontFamily: "var(--font-mono)", fontSize: "13px", fontWeight: "600", color: light.color }}>
                             {days}d
+                        </div>
+                        <div style={{ fontFamily: "var(--font-mono)", fontSize: "13px", fontWeight: "600", color: riskColor }}>
+                            {riskScore}
                         </div>
                         <div>
                             <select
