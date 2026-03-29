@@ -1,17 +1,6 @@
 import { useState, useEffect } from "react";
-
-interface Transaction {
-    id: number;
-    date: string;
-    aircraftType: string;
-    aircraftAge: number;
-    lessee: string;
-    lesseeRegion: string;
-    tenorYears: number;
-    monthlyRent: number;
-    lrf: number;
-    notes: string;
-}
+import { useAppContext } from "./AppContext";
+import type { Transaction } from "./AppContext";
 
 interface ComparableScore {
     transaction: Transaction;
@@ -29,15 +18,6 @@ const aircraftFamilies: Record<string, string> = {
     "Embraer E195": "E-Jet Family", "Embraer E195-E2": "E-Jet Family",
     "Bombardier Q400": "Q Series",
 };
-
-const defaultTransactions: Transaction[] = [
-    { id: 1, date: "2024-03", aircraftType: "A320ceo", aircraftAge: 8, lessee: "Ryanair", lesseeRegion: "Western Europe", tenorYears: 10,monthlyRent: 188000, lrf: 0.671, notes: "Sale and leaseback transaction" },
-    { id: 2, date: "2024-06", aircraftType: "A321ceo", aircraftAge: 6, lessee: "Aer Lingus", lesseeRegion: "Western Europe", tenorYears: 10, monthlyRent: 215000, lrf: 0.652, notes: "Direct lease" },
-    { id: 3, date: "2024-08", aircraftType: "ATR 72-600", aircraftAge: 4, lessee: "Emerald Airlines", lesseeRegion: "Western Europe", tenorYears: 8, monthlyRent: 195000, lrf: 0.813, notes: "New delivery lease" },
-    { id: 4, date: "2024-10", aircraftType: "B737-800", aircraftAge: 10, lessee: "EasyJet", lesseeRegion: "Western Europe", tenorYears: 8, monthlyRent: 172000, lrf: 0.663, notes: "Lease extension" },
-    { id: 5, date: "2025-01", aircraftType: "Embraer E190", aircraftAge: 7, lessee: "Loganair", lesseeRegion: "Western Europe", tenorYears: 7, monthlyRent: 205000, lrf: 0.787, notes: "Direct lease" },
-    { id: 6, date: "2025-03", aircraftType: "A320neo", aircraftAge: 3, lessee: "Wizz Air", lesseeRegion: "Eastern Europe", tenorYears: 12, monthlyRent: 325000, lrf: 0.625, notes: "New delivery lease" },
-];
 
 const aircraftTypes = ["All", "A320ceo", "A321ceo", "B737-800", "A320neo", "A321neo", "ATR 72-600", "Embraer E190", "Embraer E195", "Bombardier Q400"];
 const regions = ["All", "Western Europe", "Eastern Europe", "North America", "Middle East", "Asia", "Latin America", "Africa"];
@@ -112,16 +92,8 @@ function getMarketVerdict(proposedRent: number, comparables: ComparableScore[]):
     return { label, color, detail, rangeMin, rangeMax, midpoint, vsMarket };
 }
 
-export default function TransactionDatabase ({ externalTransaction, onTransactionLogged }: { externalTransaction? : Omit<Transaction, "id"> | null, onTransactionLogged? : () => void }) {
-    const [transactions, setTransactions] = useState<Transaction[]>(defaultTransactions);
-    const [hasLogged, setHasLogged] = useState(false);
-
-    useEffect(() => {
-        if (externalTransaction) {
-            setTransactions(prev => [...prev, { ...externalTransaction, id: prev.length + 1 }]);
-            if (onTransactionLogged) onTransactionLogged();
-        }
-    }, []);
+export default function TransactionDatabase() {
+    const { transactions, addTransaction } = useAppContext();
 
     const [filterType, setFilterType] = useState("All");
     const [filterRegion, setFilterRegion] = useState("All");
@@ -171,7 +143,7 @@ export default function TransactionDatabase ({ externalTransaction, onTransactio
     function handleAdd() {
         if (newTx.lessee && newTx.date && newTx.monthlyRent > 0) {
             if (newTx.lrf <=0) return; // require explicit LRF entry
-            setTransactions(prev => [...prev, {...newTx, id: prev.length + 1 }]);
+            addTransaction(newTx);
             setShowAddForm(false);
             setNewTx({ date: "", aircraftType: "A320ceo", aircraftAge: 8, lessee: "", lesseeRegion: "Western Europe", tenorYears: 10, monthlyRent: 0, lrf: 0, notes: "" });
         }

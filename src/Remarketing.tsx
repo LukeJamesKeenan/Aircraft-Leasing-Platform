@@ -1,27 +1,13 @@
 import { useState } from "react";
-
-interface LeaseEntry {
-    registration: string;
-    aircraftType: string;
-    lessee: string;
-    leaseStartDay: number;
-    tenorYears: number;
-    status: string;
-}
-
-const defaultLeases: LeaseEntry[] =[
-    { registration: "EI-ABC", aircraftType: "A320ceo", lessee: "Ryanair", leaseStartDay: 0, tenorYears: 8, status: "Monitoring" },
-    { registration: "EI-DEF", aircraftType: "A321ceo", lessee: "Aer Lingus", leaseStartDay: 0, tenorYears: 3, status: "Monitoring" },
-    { registration: "EI-GHI", aircraftType: "B737-800", lessee: "EasyJet", leaseStartDay: 0, tenorYears: 5, status: "Monitoring" },
-    { registration: "EI-JKL", aircraftType: "A320neo", lessee: "Wizz Air", leaseStartDay: 0, tenorYears: 12, status: "Monitoring" },
-    { registration: "EI-MNO", aircraftType: "ATR 72-600", lessee: "Ryanair", leaseStartDay: 0, tenorYears: 2, status: "Monitoring" },
-];
+import { useAppContext } from "./AppContext";
+import type { LeaseEntry } from "./AppContext";
 
 const statusOptions = ["Monitoring", "Renewal Negotiation", "Remarketing", "LOI Signed", "At Risk", "Sold"];
 
 function getRecommendation(daysToExpiry: number, status: string): string {
     if (status === "LOI Signed") return "LOI signed - proceed to lease execution.";
     if (status === "Sold") return "Asset disposed - no action required,";
+    if (status === "At Risk") return "At risk - escalate to senior management immediately";
     if (status === "Remarketing") return "Active remarketing - target lessee identification underway.";
     if (status === "Renewal Negotiation") return "Renewal in progress - monitor negotiation timeline.";
     if (daysToExpiry <= 90) return "Critical - immediate remarketing action required.";
@@ -68,7 +54,7 @@ function getRiskScore(lease: LeaseEntry): number {
 }
 
 export default function Remarketing({ onSelectLessee }: {onSelectLessee: (name: string) => void }) {
-    const [leases, setLeases] = useState<LeaseEntry[]>(defaultLeases);
+    const { leases, addLease, updateLeaseStatus } = useAppContext();
     const [showAddForm, setShowAddForm] = useState(false);
     const [newLease, setNewLease] = useState<LeaseEntry>({
         registration: "",
@@ -86,14 +72,12 @@ export default function Remarketing({ onSelectLessee }: {onSelectLessee: (name: 
 );
 
 function handleStatusChange(registration: string, newStatus: string) {
-    setLeases(prev => prev.map(l =>
-        l.registration === registration ? { ...l, status: newStatus } : l
-    ));
+    updateLeaseStatus(registration, newStatus);
 }
 
 function handleAddLease() {
     if (newLease.registration && newLease.lessee) {
-        setLeases(prev => [...prev, newLease]);
+        addLease(newLease),
         setShowAddForm(false);
         setNewLease({ registration: "", aircraftType: "A320ceo", lessee: "", leaseStartDay: 0, tenorYears: 10, status: "Monitoring" });
     }

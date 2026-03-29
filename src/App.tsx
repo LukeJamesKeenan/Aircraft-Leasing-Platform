@@ -18,6 +18,8 @@ import PricingCalculator from "./PricingCalculator";
 import CreditRisk from "./CreditRisk";
 import Remarketing from "./Remarketing";
 import TransactionDatabase from "./TransactionDatabase";
+import { AppProvider } from "./AppContext";
+import { useAppContext } from "./AppContext";
 import './App.css'
 
 function App() {
@@ -43,18 +45,6 @@ function App() {
   const [editEvent, setEditEvent] = useState(null);
   const [selectedAircraft, setSelectedAircraft] = useState(null);
   const [activeTab, setActiveTab] = useState<"portfolio" | "pricing" | "credit" | "remarketing" | "transactions">("portfolio");
-  const [creditPrefill, setCreditPrefill] = useState("");
-  const [pendingTransaction, setPendingTransaction] =useState<null | {
-    date: string;
-    aircraftType: string;
-    aircraftAge: number;
-    lessee: string;
-    lesseeRegion: string;
-    tenorYears: number;
-    monthlyRent: number;
-    lrf: number;
-    notes: string;
-  }>(null);
   
   const [aircraft, setAircraft] = useState(["EI-ABC", "EI-DEF", "EI-GHI", "EI-JKL", "EI-MNO"]);
 
@@ -208,6 +198,47 @@ function App() {
   ).length;
 
   return (
+    <AppProvider>
+      <AppInner
+      horizon={horizon}
+      setHorizon={setHorizon}
+      eventFilter={eventFilter}
+      setEventFilter={setEventFilter}
+      newAircraft={newAircraft}
+      setNewAircraft={setNewAircraft}
+      newDay={newDay}
+      setNewDay={setNewDay}
+      newType={newType}
+      setNewType={setNewType}
+      selectedEvent={selectedEvent}
+      setSelectedEvent={setSelectedEvent}
+      editEvent={editEvent}
+      setEditEvent={setEditEvent}
+      selectedAircraft={selectedAircraft}
+      setSelectedAircraft={setSelectedAircraft}
+      activeTab={activeTab}
+      setActiveTab={setActiveTab}
+      aircraft={aircraft}
+      setAircraft={setAircraft}
+      events={events}
+      setEvents={setEvents}
+      addPriceDeal={addPriceDeal}
+      addEvent={addEvent}
+      eventsInHorizon={eventsInHorizon}
+      highRiskAircraft={highRiskAircraft}
+      aircraftWithMaintenance={aircraftWithMaintenance}
+      activeLeases={activeLeases}
+      idleAircraft={idleAircraft}
+      />
+      </AppProvider>
+    );
+    }
+    function AppInner(props: any) {
+      const { setCreditPrefill } = useAppContext();
+      const {
+        horizon, setHorizon, eventFilter, setEventFilter, newAircraft, setNewAircraft, newDay, setNewDay, newType, setNewType, selectedEvent, setSelectedEvent, editEvent, setEditEvent, selectedAircraft, setSelectedAircraft, activeTab, setActiveTab, aircraft, setAircraft, events, setEvents, addPriceDeal, addEvent, eventsInHorizon, highRiskAircraft, aircraftWithMaintenance, activeLeases, idleAircraft,
+      } = props;
+      return (
     <div>
       {/* App Header */}
       <header className="app-header">
@@ -256,24 +287,10 @@ function App() {
 
       <div className="app-content">
 
-      {activeTab === "pricing" && <PricingCalculator onAddToPortfolio={addPriceDeal} onLogTransaction={(aircraftType, aircraftAge, lessee, tenorYears, monthlyRent, lrf) => {
-        const tx = {
-          date: new Date().toISOString().slice(0, 7),
-          aircraftType,
-          aircraftAge,
-          lessee,
-          lesseeRegion: "Western Europe",
-          tenorYears,
-          monthlyRent,
-          lrf,
-          notes: "Logged from Pricing Calculator",
-        };
-        setPendingTransaction(tx);
-        setActiveTab("transactions");
-      }} />}
-      {activeTab === "credit" && <CreditRisk prefillLessee={creditPrefill} onClearPrefill={() => setCreditPrefill("")} />}
+      {activeTab === "pricing" && <PricingCalculator onAddToPortfolio={addPriceDeal} onTransactionLogged={() => setActiveTab("transactions")} />}
+      {activeTab === "credit" && <CreditRisk />}
       {activeTab === "remarketing" && <Remarketing onSelectLessee={(name) => { setCreditPrefill(name); setActiveTab("credit"); }} />}
-      {activeTab === "transactions" && <TransactionDatabase externalTransaction={pendingTransaction} onTransactionLogged={() => setPendingTransaction(null)} />}
+      {activeTab === "transactions" && <TransactionDatabase />}
       {activeTab === "portfolio" && (
       <div>
 
@@ -670,7 +687,7 @@ function App() {
   )}
 </div>
 </div>
-);
+ );
 }
 
 export default App;
