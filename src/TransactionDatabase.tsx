@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface Transaction {
     id: number;
@@ -112,8 +112,17 @@ function getMarketVerdict(proposedRent: number, comparables: ComparableScore[]):
     return { label, color, detail, rangeMin, rangeMax, midpoint, vsMarket };
 }
 
-export default function TransactionDatabase () {
+export default function TransactionDatabase ({ externalTransaction, onTransactionLogged }: { externalTransaction? : Omit<Transaction, "id"> | null, onTransactionLogged? : () => void }) {
     const [transactions, setTransactions] = useState<Transaction[]>(defaultTransactions);
+    const [hasLogged, setHasLogged] = useState(false);
+
+    useEffect(() => {
+        if (externalTransaction) {
+            setTransactions(prev => [...prev, { ...externalTransaction, id: prev.length + 1 }]);
+            if (onTransactionLogged) onTransactionLogged();
+        }
+    }, []);
+
     const [filterType, setFilterType] = useState("All");
     const [filterRegion, setFilterRegion] = useState("All");
     const [showAddForm, setShowAddForm] = useState(false);

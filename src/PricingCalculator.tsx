@@ -15,8 +15,9 @@ const defaultInputs: PricingInputs = {
 
 interface PricingCalculatorProps {
     onAddToPortfolio?: (aircraftType: string, registration: string, lessee: string, monthlyRent: number, tenorYears: number) => void;
+    onLogTransaction?: (aircraftType: string, aircraftAge: string, lessee: string, tenorYears: number, monthlyRent: number, lrf: number) => void;
 }
-export default function PricingCalculator ({ onAddToPortfolio }: PricingCalculatorProps) {
+export default function PricingCalculator ({ onAddToPortfolio, onLogTransaction }: PricingCalculatorProps) {
     const [inputs, setInputs] = useState<PricingInputs>(defaultInputs);
     const [outputs, setOutputs] = useState<PricingOutputs | null>(null);
     const [showAddForm, setShowAddForm] = useState(false);
@@ -153,6 +154,16 @@ export default function PricingCalculator ({ onAddToPortfolio }: PricingCalculat
                                                     Math.round(outputs.monthlyRent),
                                                     inputs.leaseTenorYears
                                                 );
+                                                if (onLogTransaction) {
+                                                    onLogTransaction(
+                                                        inputs.aircraftType,
+                                                        inputs.aircraftAge,
+                                                        lessee,
+                                                        inputs.leaseTenorYears,
+                                                        Math.round(outputs.monthlyRent),
+                                                        outputs.lrf
+                                                    );
+                                                }
                                                 setShowAddForm(false);
                                                 setRegistration("");
                                                 setLessee("");

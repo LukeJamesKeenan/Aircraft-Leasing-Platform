@@ -44,6 +44,17 @@ function App() {
   const [selectedAircraft, setSelectedAircraft] = useState(null);
   const [activeTab, setActiveTab] = useState<"portfolio" | "pricing" | "credit" | "remarketing" | "transactions">("portfolio");
   const [creditPrefill, setCreditPrefill] = useState("");
+  const [pendingTransaction, setPendingTransaction] =useState<null | {
+    date: string;
+    aircraftType: string;
+    aircraftAge: number;
+    lessee: string;
+    lesseeRegion: string;
+    tenorYears: number;
+    monthlyRent: number;
+    lrf: number;
+    notes: string;
+  }>(null);
   
   const [aircraft, setAircraft] = useState(["EI-ABC", "EI-DEF", "EI-GHI", "EI-JKL", "EI-MNO"]);
 
@@ -245,10 +256,24 @@ function App() {
 
       <div className="app-content">
 
-      {activeTab === "pricing" && <PricingCalculator onAddToPortfolio={addPriceDeal} />}
+      {activeTab === "pricing" && <PricingCalculator onAddToPortfolio={addPriceDeal} onLogTransaction={(aircraftType, aircraftAge, lessee, tenorYears, monthlyRent, lrf) => {
+        const tx = {
+          date: new Date().toISOString().slice(0, 7),
+          aircraftType,
+          aircraftAge,
+          lessee,
+          lesseeRegion: "Western Europe",
+          tenorYears,
+          monthlyRent,
+          lrf,
+          notes: "Logged from Pricing Calculator",
+        };
+        setPendingTransaction(tx);
+        setActiveTab("transactions");
+      }} />}
       {activeTab === "credit" && <CreditRisk prefillLessee={creditPrefill} onClearPrefill={() => setCreditPrefill("")} />}
       {activeTab === "remarketing" && <Remarketing onSelectLessee={(name) => { setCreditPrefill(name); setActiveTab("credit"); }} />}
-      {activeTab === "transactions" && <TransactionDatabase />}
+      {activeTab === "transactions" && <TransactionDatabase externalTransaction={pendingTransaction} onTransactionLogged={() => setPendingTransaction(null)} />}
       {activeTab === "portfolio" && (
       <div>
 
