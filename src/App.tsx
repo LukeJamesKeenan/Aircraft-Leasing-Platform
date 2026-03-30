@@ -20,6 +20,7 @@ import Remarketing from "./Remarketing";
 import TransactionDatabase from "./TransactionDatabase";
 import { AppProvider } from "./AppContext";
 import { useAppContext } from "./AppContext";
+import PortfolioAnalytics from "./PortfolioAnalytics";
 import './App.css'
 
 function App() {
@@ -44,7 +45,7 @@ function App() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [editEvent, setEditEvent] = useState(null);
   const [selectedAircraft, setSelectedAircraft] = useState(null);
-  const [activeTab, setActiveTab] = useState<"portfolio" | "pricing" | "credit" | "remarketing" | "transactions">("portfolio");
+  const [activeTab, setActiveTab] = useState<"portfolio" | "pricing" | "credit" | "remarketing" | "transactions" | "analytics">("portfolio");
   
   const [aircraft, setAircraft] = useState(["EI-ABC", "EI-DEF", "EI-GHI", "EI-JKL", "EI-MNO"]);
 
@@ -283,6 +284,12 @@ function App() {
         onClick={() => setActiveTab("transactions")}>
           Transactions
         </button>
+
+        <button
+        className={`tab-btn ${activeTab === "analytics" ? "active" : ""}`}
+        onClick={() => setActiveTab("analytics")}>
+          Analytics
+        </button>
       </nav>
 
       <div className="app-content">
@@ -291,6 +298,7 @@ function App() {
       {activeTab === "credit" && <CreditRisk />}
       {activeTab === "remarketing" && <Remarketing onSelectLessee={(name) => { setCreditPrefill(name); setActiveTab("credit"); }} />}
       {activeTab === "transactions" && <TransactionDatabase />}
+      {activeTab === "analytics" && <PortfolioAnalytics />}
       {activeTab === "portfolio" && (
       <div>
 
