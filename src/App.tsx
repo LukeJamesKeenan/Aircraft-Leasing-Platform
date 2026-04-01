@@ -21,6 +21,7 @@ import TransactionDatabase from "./TransactionDatabase";
 import { AppProvider } from "./AppContext";
 import { useAppContext } from "./AppContext";
 import PortfolioAnalytics from "./PortfolioAnalytics";
+import RedeliveryManager from "./RedeliveryManager";
 import './App.css'
 
 function App() {
@@ -290,6 +291,12 @@ function App() {
         onClick={() => setActiveTab("analytics")}>
           Analytics
         </button>
+
+        <button
+        className={`tab-btn ${activeTab === "redelivery" ? "active" : ""}`}
+        onClick={() => setActiveTab("redelivery")}>
+          Redelivery
+        </button>
       </nav>
 
       <div className="app-content">
@@ -299,6 +306,7 @@ function App() {
       {activeTab === "remarketing" && <Remarketing onSelectLessee={(name) => { setCreditPrefill(name); setActiveTab("credit"); }} />}
       {activeTab === "transactions" && <TransactionDatabase />}
       {activeTab === "analytics" && <PortfolioAnalytics />}
+      {activeTab === "redelivery" && <RedeliveryManager />}
       {activeTab === "portfolio" && (
       <div>
 
