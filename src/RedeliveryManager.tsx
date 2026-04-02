@@ -132,7 +132,6 @@ export default function RedeliveryManager() {
                     </div>
                     {redeliveries.map(r => {
                         const progress = Math.round((r.checklistItems.filter(c => c.completed).length / r.checklistItems.length) * 100);
-                        const surplus = r.maintenanceReserveBalance - r.estimatedRedeliveryCost + r.compensationItems.reduce((sum, c) => sum + c.amount, 0);
                         return (
                             <div
                             key={r.registration}

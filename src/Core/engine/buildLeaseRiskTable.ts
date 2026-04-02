@@ -1,8 +1,8 @@
 import { portfolio } from "./portfolio";
 import { evaluateLeaseRisk } from "./evaluateLeaseRisk";
-import type { LeaseRiskRow } from "./models/LeaseRiskRow";
+import type { leaseRiskRow } from "./models/LeaseRiskRow";
 
-export function buildLeaseRiskTable(): LeaseRiskRow[] {
+export function buildLeaseRiskTable(): leaseRiskRow[] {
     return portfolio.map((lease) => {
         const result = evaluateLeaseRisk(
             lease.baseReservesCollected,

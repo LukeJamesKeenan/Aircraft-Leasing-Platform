@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAppContext } from "./AppContext";
 import type { Transaction } from "./AppContext";
 

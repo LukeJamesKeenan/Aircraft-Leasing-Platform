@@ -1,9 +1,5 @@
 import { useAppContext } from "./AppContext";
 
-function getDaysToExpiry(tenorYears: number): number {
-    return Math.round(tenorYears * 365);
-}
-
 export default function PortfolioAnalytics() {
     const { transactions, leases } = useAppContext();
 

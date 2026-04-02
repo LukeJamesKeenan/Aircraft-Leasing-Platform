@@ -113,8 +113,8 @@ function App() {
   }
       return defaultEvents.map (e => ({
         ...e,
-        lesseeStatus: e.lesseeStatus || "Active",
-        maintenanceCategory: e.maintenanceCategory || "",
+        lesseeStatus: (e as any).lesseeStatus || "Active",
+        maintenanceCategory: (e as any).maintenanceCategory || "",
         notes: ""
       }));
   });

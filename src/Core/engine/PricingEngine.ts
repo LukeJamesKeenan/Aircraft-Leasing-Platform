@@ -100,5 +100,3 @@ export function calculatePricing(inputs: PricingInputs): PricingOutputs {
         irr,   
     };
 }
-
-export type {PricingInputs, PricingOutputs };
