@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="EUT-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>LeasePlatform - Aircraft Leasing Intelligence</title>
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+
+            :root {
+                --navy: #0a0f1e;
+                --navy-card: #111827;
+                --navy-border: #1e2d45;
+                --blue: #2563eb;
+                --blue-bright: #3b82f6;
+                --blue-dim: #1d4ed8;
+                --text-primary: #f1f5f9;
+                --text-secondary: #94a3b8;
+                --text-muted: #64748b;
+                --green: #16a34a;
+                --amber: #d97706;
+                --font-mono: "JetBrains Mono", "Fira Code", monospace;
+            }
+
+            body {
+                background: var(--navy);
+                color: var(--text-primary);
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                line-height: 1.6;
+            }
+
+            /* NAV */
+            nav {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px 80px;
+                border-bottom: 1px solid var(--navy-border);
+                position: sticky;
+                top: 0;
+                background: var(--navy);
+                z-index: 100;
+            }
+
+            .logo {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .logo-icon {
+                width: 32px;
+                height: 32px;
+                background: var(--blue);
+                border-radius: 6px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+                font-weight: 700;
+                color: #fff;
+            }
+
+            .logo-text {
+                font-size: 16px;
+                font-weight: 600;
+                color: var(--text-primary)
+            }
+
+            .logo-badge {
+                font-size: 10px;
+                background: rgba(37, 99, 235, 0.2);
+                color: var(--blue-bright);
+                padding: 2px 8px;
+                border-radius: 20px;
+                border: 1px solid rgba(37, 99, 235, 0.3);
+            }
+
+            .nav-cta {
+                background: var(--blue);
+                color: #fff;
+                border: none;
+                padding: 10px 24px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                text-decoration: none;
+            }
+
+            .nav-cta:hover { background: var(--blue-dim);}
+
+            /* HERO */
+            .hero{
+                padding: 120px 80px 100px;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .hero-tag {
+                display: inline-block;
+                font-size: 12px;
+                font-family: var(--font-mono);
+                color: var(--blue-bright);
+                background: rgba(37, 99, 235, 0.1);
+                border: 1px solid rgba(37, 99, 235, 0.2);
+                padding: 4px 12px;
+                border-radius: 4px;
+                margin-bottom: 24px;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+            }
+
+            .hero h1 span { color: var(--blue-bright); }
+
+            .hero p {
+                font-size: 20px;
+                color: var(--text-secondary);
+                max-width: 600px;
+                margin-bottom: 40px;
+                line-height: 1.7;
+            }
+
+            .hero-buttons {
+                display: flex;
+                gap: 16px;
+                align-items: center;
+            }
+
+            .btn-primary {
+                background: var(--blue);
+                color: #fff;
+                border: none;
+                padding: 14px 32px;
+                border-radius: 6px;
+                font-size: 15px;
+                font-weight: 500;
+                cursor: pointer;
+                text-decoration: none;
+            }
+
+            .btn-primary:hover { background: var(--blue-dim); }
+
+            .btn-secondary {
+                color: var(--text-secondary);
+                font-size: 15px;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .btn-secondary:hover { color: var(--text-primary); }
+            .hero-stats {
+                display: flex;
+                gap: 48px;
+                margin-top: 80px;
+                padding-top: 48px;
+                border-top: 1px solid var(--navy-border);
+            }
+
+            .stat-value {
+                font-size: 32px;
+                font-weight: 700;
+                color: var(--text-primary);
+                font-family: var(--font-mono);
+            }
+
+            .stat-label {
+                font-size: 13px;
+                color: var(--text-muted);
+                margin-top: 4px;
+            }
+
+            /* Problem */
+            .section {
+                padding: 100px 80px;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .section-tag {
+                font-size: 12px;
+                font-family: var(--font-mono);
+                color: var(--text-muted);
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                margin-bottom: 16px;
+            }
+
+            .section h2 {
+                font-size: 40px;
+                font-weight: 700;
+                margin-bottom: 16px;
+                line-height: 1.2;
+            }
+
+            .section-subtitle {
+                font-size: 18px;
+                color: var(--text-secondary);
+                max-width: 600px;
+                margin-bottom: 64px;
+            }
+
+            .problem-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 24px;
+            }
+
+            .problem-card {
+                background: var(--navy-card);
+                border: 1px solid var(--navy-border);
+                border-radius: 10px;
+                padding: 28px;
+            }
+
+            .problem-icon {
+                width: 40px;
+                height: 40px;
+                background: rgba(239, 68, 68, 0.1);
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 18px;
+                margin-bottom: 16px;
+            }
+
+            .problem-card h3 {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+
+            .problem-card p {
+                font-size: 14px;
+                color: var(--text-secondary);
+                line-height: 1.6;
+            }
+
+            /* Features */
+            .features-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 24px;
+            }
+
+            .feature-card {
+                background: var(--navy-card);
+                border: 1px solid var(--navy-border);
+                border-radius: 10px;
+                padding: 28px;
+                transition: border-color 0.2s;
+            }
+
+            .feature-card:hover { border-color: var(--blue);}
+
+            .feature-tag {
+                font-size: 10px;
+                font-family: var(--font-mono);
+                color: var(--blue-bright);
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                margin-bottom: 12px;
+            }
+
+            .feature-card h3 {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 10px;
+            }
+
+            .feature-card p {
+                font-size: 14px;
+                color: var(--text-secondary);
+                line-height: 1.6;
+                margin-bottom: 16px;
+            }
+
+            .feature-bullets {
+                list-style: none;
+            }
+
+            .feature-bullets li {
+                font-size: 13px;
+                color: var(--text-muted);
+                padding: 4px 0;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .feature-bullets li::before {
+                content: "→";
+                color: var(--blue-bright);
+                font-size: 12px;
+            }
+
+            /* Credibility */
+            .credibility {
+                background: var(--navy-card);
+                border-top: 1px solid var(--navy-border);
+                border-bottom: 1px solid var(--navy-border);
+                padding: 100px 80px;
+            }
+
+            .credibility-inner {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .credibility-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 32px;
+                margin-top: 64px;
+            }
+
+            .credibility-item h4 {
+                font-size: 15px;
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: var(--text-primary);
+            }
+
+            .credibility-item p {
+                font-size: 13px;
+                color: var(--text-secondary);
+                line-height: 1.6;
+            }
+
+            .credibility-item .dot {
+                width: 8px;
+                height: 8px;
+                background: var(--blue-bright);
+                border-radius: 50%;
+                margin-bottom: 16px;
+            }
+
+            /* CTA */
+            .cta-section {
+                padding: 120px 80px;
+                text-align: center;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .cta-section h2 {
+                font-size: 48px;
+                font-weight: 700;
+                margin-bottom: 16px;
+            }
+
+            .cta-section p {
+                font-size: 18px;
+                color: var(--text-secondary);
+                margin-bottom: 40px;
+            }
+
+            /* Footer */
+            footer {
+                border-top: 1px solid var(--navy-border);
+                padding: 40px 80px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            footer p {
+                font-size: 13px;
+                color: var(--text-muted);
+            }
+        </style>
+    </head>
+    <body>
+
+        <!--NAV -->
+        <nav>
+            <div class="logo">
+                <div class="logo-icon">FL</div>
+                <span class="logo-text">LeasePlatform</span>
+                <span class="logo-badge">Beta</span>
+            </div>
+            <a href="mailto:hello@leaseplatform.io" class="nav-cta">Request a Demo</a>
+        </nav>
+
+        <!-- HERO -->
+         <div class="hero">
+            <div class="hero-tag">Aircraft Leasing Intelligence Platform</div>
+            <h1>The operating system for <span> aircraft lessors</span></h1>
+            <p>LeasePlatform centralises portfolio management, lease pricing, credit risk, remarketing and redelivery into one intelligent platform - built specifically for the aircraft leasing industry.</p>
+            <div class="hero-buttons">
+                <a href="mailto:hello@leaseplatform.io" class="btn-primary">Request a Demo</a>
+                <a href="#features" class="btn-secondary">See the modules</a>
+            </div>
+            <div class="hero-stats">
+                <div>
+                    <div class="stat-value">6</div>
+                    <div class="stat-label">Integrated modules</div>
+                </div>
+                <div>
+                    <div class="stat-value">1</div>
+                    <div class="stat-label">Source of truth</div>
+                </div>
+                <div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Spreadsheets needed</div>
+                </div>
+            </div>
+         </div>
+
+         <!-- PROBLEM-->
+          <div class="section">
+            <div class="section-tag">The problem</div>
+            <h2>Aircraft leasing runs on fragmented tools</h2>
+            <p class="section-subtitle">Lease data lives in Excel, maintenance records in another system, credit information somewhere else. Nobody has a single source of truth.</p>
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <div class="problem-icon">⚡</div>
+                    <h3>Remarketing is reactive</h3>
+                    <p>Teams find out a lease is expiring months before it does, scramble to remarket, and negotiate from a weak position.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">📊</div>
+                    <h3>Comparable data is guarded</h3>
+                    <p>LRF and rent benchmarks are shared informally between people who know each other. There is no structured, queryable database.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">🔧</div>
+                    <h3>Redelivery is a nightmare</h3>
+                    <p>Maintenance reserve tracking, condition disputes, and compensation calculations are managed in massive Excel models that break.</p>
+                </div>
+            </div>
+          </div>
+
+          <!-- FEATURES -->
+           <div class="section" id="features">
+            <div class="section-tag">The Platform</div>
+            <h2>Everything in one place</h2>
+            <p class="section-subtitle">Six Integrated modules, one shared data layer. Every action in one module instantly updates the rest.</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-tag">Module 01</div>
+                    <h3>Portfolio Timeline</h3>
+                    <p>A live visual timeline of every lease event, maintenance check, and cash flow across your entire fleet.</p>
+                    <ul class="feature-bullets">
+                        <li>Analyst action panel with daily priorities</li>
+                        <li>Risk flagging across the fleet</li>
+                        <li>Horizon filtering from 30 to 180 days</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-tag">Module 02</div>
+                    <h3>Pricing Calculator</h3>
+                    <p>Age-adjusted residual value model with PMT-based LRF calculations and XIRR-based IRR output.</p>
+                    <ul class="feature-bullets">
+                        <li>Supports all major narrowbody and regional types</li>
+                        <li>Automatic transaction logging on deal confirmation</li>
+                        <li>Funding cost and return spread inputs</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-tag">Module 03</div>
+                    <h3>Credit Risk</h3>
+                    <p>Structured lessee creditworthiness scoring across five weighted categories - financial health, operational scale, country risk, airline type, and recent performance.</p>
+                    <ul class="feature-bullets">
+                        <li>Weighted scoring model with analyst summary</li>
+                        <li>Low / Medium / High risk ratings</li>
+                        <li>One-click access from Remarketing Pipeline</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-tag">Module 04</div>
+                    <h3>Remarketing Pipeline</h3>
+                    <p>Proactive lease expiry tracking with risk scoring, status management, and recommended actions per aircraft.</p>
+                    <ul class="feature-bullets">
+                        <li>Remarketing Risk Score per lease</li>
+                        <li>Urgent / Watch / On Track classification</li>
+                        <li>Direct lessee credit risk access</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-tag">Module 05</div>
+                    <h3>Transaction Database</h3>
+                    <p>A structured database of completed lease transactions with a built-in Comparables Engine that benchmarks proposed deals against the market.</p>
+                    <ul class="feature-bullets">
+                        <li>Comparables scored by type, age, region, tenor</li>
+                        <li>Market verdict: Strong / At Market / Weak</li>
+                        <li>Average LRF benchmarks by aircraft type</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-tag">Module 06</div>
+                    <h3>Redelivery Manager</h3>
+                    <p>End-to-end redelivery tracking with maintenance reserve ledger, compensation calculator, and structured checklists.</p>
+                    <ul class="feature-bullets">
+                        <li>MR balance vs estimated cost with live surplus/deficit</li>
+                        <li>Technical, documentation and commercial checklists</li>
+                        <li>Compensation item tracking per aircraft</li>
+                    </ul>
+                </div>
+            </div>
+           </div>
+
+           <!-- CREDIBILITY -->
+            <div class="credibility">
+                <div class="credibility-inner">
+                    <div class="section-tag">Built for the industry</div>
+                    <h2>Designed by someone who understands leasing</h2>
+                    <div class="credibility-grid">
+                        <div class="credibility-item">
+                                <div class="dot"></div>
+                                <h4>Law Society Certificate</h4>
+                                <p>Aviation Leasing & Finance - Law Society of Ireland</p>
+                            </div>
+                            <div class="credibility-item">
+                                <div class="dot"></div>
+                                <h4>Industry Experience</h4>
+                                <p>Aviation and financial services tax at Grant Thornton Ireland</p>
+                            </div>
+                            <div class="credibility-item">
+                                <div class="dot"></div>
+                                <h4>Bloomberg Certificate</h4>
+                                <p>Financial markets and data analysis certification</p>
+                            </div>
+                            <div class="credibility-item">
+                                <div class="dot"></div>
+                                <h4>Regional Fleet Focus</h4>
+                                <p>Built around ATR, Embraer and Q400 - the backbone of regional leasing</p>
+                            </div>
+                        </div>
+                </div>
+
+                <!-- CTA -->
+                 <div class="cta-section">
+                    <h2>Ready to see it in action?</h2>
+                    <p>Request a demo and we'll walk you through the full platform,</p>
+                    <a href="mailto:hello@leaseplatform.io" class="btn-primary">Request a Demo</a>
+                 </div> 
+
+                 <!-- FOOTER -->
+                  <footer>
+                    <div class="logo">
+                        <div class="logo-icon">FL</div>
+                        <span class="logo-text">LeasePlatform</span>
+                        <span class="logo-badge">Beta</span>
+                    </div>
+                    <p>© 2026 LeasePlatform. Built for aircraft lessors.</p>
+                  </footer>
+    </body>
+</html>
