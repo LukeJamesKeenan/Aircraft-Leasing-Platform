@@ -114,6 +114,107 @@ export default function RedeliveryManager() {
 
     const categories = ["Technical", "Documentation", "Commercial"];
 
+    function exportToPDF() {
+        if (!selected) return;
+        const surplus = selected.maintenanceReserveBalance - selected.estimatedRedeliveryCost + selected.compensationItems.reduce((sum, c) => sum + c.amount, 0);
+        const progress = Math.round((selected.checklistItems.filter(c => c.completed).length / selected.checklistItems.length) * 100);
+
+        const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+        <title>Redelivery Report - ${selected.registration}</title>
+        <style>
+        body { font-family: -apple-system, sans-serif; color: #1e293b; padding: 40px; max-width: 800px; margin: 0 auto; }
+        h1 { font-size: 22px, font-weight: 700; margin-bottom: 4px; }
+        .subtitle { font-size: 13px; color: #64748b; margin-bottom: 32px; }
+        .meta { font-size: 13px; color: #475569; margin-bottom: 24px; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 32px; }
+        .kpi { border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; }
+        .kpi-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #94a3b8; margin-bottom: 6px; }
+        .kpi-value { font-size: 20px; font-weight: 700; }
+        .kpi-sub { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+        .section { margin-bottom: 28px; }
+        .section-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
+        .checklist-category { font-size: 11px; font-weight: 600; text-transform: uppercase; color: #94a3b8; margin: 12px 0 6px; }
+        .checklist-item { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+        .check { width: 14px; height: 14px; border: 1.5px solid #cbd5e1; border-radius: 3px; display: inline-block; flex-shrink: 0; }
+        .check-done { background: #16a34a; border-color: #16a34a; }
+        .comp-row { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; border-bottom: 1px solid #f1f5f9; }
+        .surplus { color: ${surplus >=0 ? "#16a34a" : "#ef4444"}; font-weight: 700; }
+        .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid #e2e8f0; font-size: 11px; color: #94a3b8, display: flex; justify-content: space-between; }
+        </style>
+        </head>
+        <body>
+        <h1>Redelivery Report - ${selected.registration}</h1>
+        <div class="subtitle">LeasePlatform · Generated ${new Date().toLocaleDateString("en-IE")}</div>
+        <div class="meta">
+        <strong>Aircraft:</strong> ${selected.aircraftType} &nbsp;|&nbsp
+        <strong>Lessee:</strong> ${selected.lessee} &nbsp;|&nbsp
+        <strong>Lease End:</strong> ${selected.leaseEndDate || "TBC"} &nbsp;|&nbsp
+        <strong>Checklist:</strong> ${progress}% complete
+        </div>
+        <div class="kpi-grid">
+        <div class="kpi">
+        <div class="kpi-label">MR Balance</div>
+        <div class="kpi-value">€${selected.maintenanceReserveBalance.toLocaleString()}</div>
+        <div class="kpi-sub">reserves Collected</div>
+        </div>
+        <div class="kpi">
+        <div class="kpi-label">Est. Redelivery Cost</div>
+        <div class="kpi-value">€${selected.estimatedRedeliveryCost.toLocaleString()}</div>
+        <div class="kpi-sub">estimated cost</div>
+        </div>
+        <div class="kpi">
+        <div class="kpi-label">Compensation Total</div>
+        <div class="kpi-value">€${selected.compensationItems.reduce((sum, c) => sum + c.amount, 0).toLocaleString()}</div>
+        <div class="kpi-sub">compensation items</div>
+        </div>
+        <div class="kpi">
+        <div class="kpi-label">Surplus / Deficit</div>
+        <div class="kpi-value surplus">${surplus >= 0 ? "+" : ""}€${surplus.toLocaleString()}</div>
+        <div class="kpi-sub">net position</div>
+        </div>
+        </div>
+        ${selected.compensationItems.length > 0 ? `
+        <div class="section">
+        <div class="section-title">Compensation Items</div>
+        ${selected.compensationItems.map(c => `
+            <div class="comp-row">
+            <span>${c.description || "—"}</span>
+            <span>€${c.amount.toLocaleString()}</span>
+            </div>
+            `).join("")}
+        </div>` : ""}
+        <div class="section">
+        <div class="section">
+        <div class="section-title">Redelivery Checklist</div>
+        ${["Technical", "Documentation", "Commercial"].map(cat => `
+            <div class="checklist-category">${cat}</div>
+            ${selected.checklistItems.filter(i => i.category === cat).map(i => `
+                <div class="checklist-item">
+                <div class="check ${i.completed ? "done" : ""}"></div>
+                <span style="color: ${i.completed ? "#94a3b8" : "#1e293b"}; text-decoration: ${i.completed ? "line-through" : "none"}">${i.description}</spam>
+                </div>
+            `).join("")}
+        `).join("")}
+        </div>
+        <div class="footer">
+        <span>LeasePlatform — Aircraft Leasing Intelligence</span>
+        <span>${selected.registration} · ${selected.aircraftType} · ${selected.lessee}</span>
+        </div>
+    </body>
+    </html>`;
+
+    const win = window.open("", "_blank");
+    if (win) {
+        win.document.write(html);
+        win.document.close();
+        win.print();
+    }
+
+    }
+
     return (
         <div>
             <h2 style={{ fontSize: "18px", fontWeight: "600", marginBottom: "4px" }}>
@@ -154,6 +255,11 @@ export default function RedeliveryManager() {
                 {/* Right - Detail Panel */}
                 {selected ? (
                     <div>
+                        <div style ={{ display: "flex", justifyContent: "flex-end", marginBottom: "16px" }}>
+                            <button className="export-btn" onClick={exportToPDF}>
+                                Export PDF Report
+                            </button>
+                        </div>
                     {/* Header KPIs */}
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "32px" }}>
                     <div className="kpi-card">
