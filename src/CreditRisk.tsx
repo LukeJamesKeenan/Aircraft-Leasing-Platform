@@ -155,7 +155,7 @@ export default function CreditRisk() {
                 Structured scoring framework for aircraft lessee creditworthiness
             </p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", maxWidth: "900px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "24px" }}>
 
                 {/* Left - Inputs */}
                 <div className="pricing-form-card">

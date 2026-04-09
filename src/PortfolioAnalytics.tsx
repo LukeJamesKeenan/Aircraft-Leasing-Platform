@@ -58,7 +58,7 @@ export default function PortfolioAnalytics() {
     const maxBar = (arr: number[]) => Math.max(...arr, 1);
 
     return (
-        <div>
+        <div style={{ maxWidth: "1200px" }}>
             <h2 style={{ fontSize: "18px", fontWeight: "600", marginBottom: "4px" }}>
                 Portfolio Analytics
             </h2>
@@ -67,7 +67,7 @@ export default function PortfolioAnalytics() {
             </p>
 
             {/* KPI Cards */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px", marginBottom: "32px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px", marginBottom: "32px", maxWidth: "900px" }}>
                 <div className="kpi-card">
                     <div className="kpi-label">Total Assets</div>
                     <div className="kpi-value">{totalAssets}</div>

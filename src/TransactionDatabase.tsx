@@ -193,7 +193,7 @@ export default function TransactionDatabase() {
                     onClick={() => { setShowBenchmark(b => !b); setShowAddForm(false); }}
                     style={showBenchmark ? { backgroundColor: "var(--accent-bright)", color: "#fff", borderColor: "var(--accent-bright)" } : {}}
                 >
-                    {showBenchmark ? "X Close Benchmark" : "⬡ Benchmark a Deal"}
+                    {showBenchmark ? "X Close Benchmark" : "Benchmark a Deal"}
                 </button>
                 <button className="export-btn" onClick={() => { setShowAddForm(f => !f); setShowBenchmark(false); }}>
                     {showAddForm ? "X Cancel" : "+ Log Transaction"}

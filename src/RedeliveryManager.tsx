@@ -155,7 +155,7 @@ export default function RedeliveryManager() {
                 {selected ? (
                     <div>
                     {/* Header KPIs */}
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px", marginBottom: "24px" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "32px" }}>
                     <div className="kpi-card">
                     <div className="kpi-label">MR Balance</div>
                     <div className="kpi-value" style={{ fontSize: "18px", color: "var(--accent-bright)" }}>
