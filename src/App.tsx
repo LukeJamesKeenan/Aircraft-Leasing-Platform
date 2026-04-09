@@ -46,7 +46,7 @@ function App() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [editEvent, setEditEvent] = useState(null);
   const [selectedAircraft, setSelectedAircraft] = useState(null);
-  const [activeTab, setActiveTab] = useState<"portfolio" | "pricing" | "credit" | "remarketing" | "transactions" | "analytics">("portfolio");
+  const [activeTab, setActiveTab] = useState<"portfolio" | "pricing" | "credit" | "remarketing" | "transactions" | "analytics" | "redelivery">("portfolio");
   
   const [aircraft, setAircraft] = useState(["EI-ABC", "EI-DEF", "EI-GHI", "EI-JKL", "EI-MNO"]);
 
@@ -237,6 +237,7 @@ function App() {
     }
     function AppInner(props: any) {
       const { setCreditPrefill } = useAppContext();
+      const [redeliveryPrefill, setRedeliveryPrefill] = useState<string | null>(null);
       const {
         horizon, setHorizon, eventFilter, setEventFilter, newAircraft, setNewAircraft, newDay, setNewDay, newType, setNewType, selectedEvent, setSelectedEvent, editEvent, setEditEvent, selectedAircraft, setSelectedAircraft, activeTab, setActiveTab, aircraft, setAircraft, events, setEvents, addPriceDeal, addEvent, eventsInHorizon, highRiskAircraft, aircraftWithMaintenance, activeLeases, idleAircraft,
       } = props;
@@ -303,10 +304,10 @@ function App() {
 
       {activeTab === "pricing" && <PricingCalculator onAddToPortfolio={addPriceDeal} onTransactionLogged={() => setActiveTab("transactions")} />}
       {activeTab === "credit" && <CreditRisk />}
-      {activeTab === "remarketing" && <Remarketing onSelectLessee={(name) => { setCreditPrefill(name); setActiveTab("credit"); }} />}
+      {activeTab === "remarketing" && <Remarketing onSelectLessee={(name) => { setCreditPrefill(name); setActiveTab("credit"); }} onSelectRegistration={(reg) => { setRedeliveryPrefill(reg); setActiveTab("redelivery"); }} />}
       {activeTab === "transactions" && <TransactionDatabase />}
       {activeTab === "analytics" && <PortfolioAnalytics />}
-      {activeTab === "redelivery" && <RedeliveryManager />}
+      {activeTab === "redelivery" && <RedeliveryManager prefillRegistration={redeliveryPrefill} onClearPrefill={() => setRedeliveryPrefill(null)} />}
       {activeTab === "portfolio" && (
       <div>
 

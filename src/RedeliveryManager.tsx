@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppContext } from "./AppContext";
 
 interface RedeliveryItem {
@@ -41,10 +41,18 @@ const defaultChecklist: ChecklistItem[] = [
     {id: "c12", category: "Commercial", description: "Redelivery location confirmed", completed: false, notes: "" },
 ];
 
-export default function RedeliveryManager() {
+export default function RedeliveryManager({ prefillRegistration, onClearPrefill }: {prefillRegistration?: string | null, onClearPrefill?: () => void }) {
     const { leases } = useAppContext();
 
-    const [selectedReg, setSelectedReg] = useState<string | null>(null);
+    const [selectedReg, setSelectedReg] = useState<string | null>(prefillRegistration || null);
+
+    useEffect(() => {
+        if (prefillRegistration) {
+            setSelectedReg(prefillRegistration);
+            if (onClearPrefill) onClearPrefill();
+        }
+    }, [prefillRegistration]);
+    
     const [redeliveries, setRedeliveries] = useState<RedeliveryItem[]>(
         leases.map(l => ({
             registration: l.registration,

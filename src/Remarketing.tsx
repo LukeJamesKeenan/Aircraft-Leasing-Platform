@@ -53,7 +53,7 @@ function getRiskScore(lease: LeaseEntry): number {
     return Math.min(score, 100);
 }
 
-export default function Remarketing({ onSelectLessee }: {onSelectLessee: (name: string) => void }) {
+export default function Remarketing({ onSelectLessee, onSelectRegistration }: {onSelectLessee: (name: string) => void, onSelectRegistration: (reg: string) => void }) {
     const { leases, addLease, updateLeaseStatus } = useAppContext();
     const [showAddForm, setShowAddForm] = useState(false);
     const [newLease, setNewLease] = useState<LeaseEntry>({
@@ -186,7 +186,10 @@ return (
 
                 return (
                     <div key={lease.registration} style={{ display: "grid", gridTemplateColumns: "110px 120px 140px 90px 90px 160px 2fr", gap: "12px", padding: "12px", borderBottom: "1px solid var(--border)", alignItems: "center" }}>
-                        <div style={{ fontFamily: "var(--font-mono)", fontSize: "13px", fontWeight: "600", color: "var(--text-primary)"}}>
+                        <div
+                        onClick={() => onSelectRegistration(lease.registration)}
+                        style={{ fontFamily: "var(--font-mono)", fontSize: "13px", fontWeight: "600", color: "var(--accent-bright)", cursor: "pointer", textDecoration: "underline" }}
+                        >
                             {lease.registration}
                         </div>
                         <div style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
