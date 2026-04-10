@@ -1,4 +1,4 @@
-import {createContext, useContext, useState } from "react";
+import {createContext, useContext, useState, useEffect } from "react";
 
 // Types
 
@@ -60,8 +60,24 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-    const [transactions, setTransactions] = useState<Transaction[]>(defaultTransactions);
-    const [leases, setLeases] = useState<LeaseEntry[]>(defaultLeases);
+    const [transactions, setTransactions] = useState<Transaction[]>(() => {
+        const saved = localStorage.getItem("lp-transactions");
+        return saved ? JSON.parse(saved) : defaultTransactions;
+    });
+
+    const [leases, setLeases] = useState<LeaseEntry[]>(() => {
+        const saved = localStorage.getItem("lp-leases");
+        return saved ? JSON.parse(saved) : defaultLeases;
+    });
+
+    useEffect(() => {
+        localStorage.setItem("lp-transactions", JSON.stringify(transactions));
+    }, [transactions]);
+
+    useEffect(() => {
+        localStorage.setItem("lp-leases", JSON.stringify(leases));
+    }, [leases]);
+
     const [creditPrefill, setCreditPrefill] = useState("");
 
     function addTransaction(tx: Omit<Transaction, "id">) {

@@ -141,12 +141,15 @@ export default function TransactionDatabase() {
     const gridCols = "80px 120px 50px 140px 115px 60px 115px 75px 1fr";
 
     function handleAdd() {
-        if (newTx.lessee && newTx.date && newTx.monthlyRent > 0) {
-            if (newTx.lrf <=0) return; // require explicit LRF entry
-            addTransaction(newTx);
-            setShowAddForm(false);
-            setNewTx({ date: "", aircraftType: "A320ceo", aircraftAge: 8, lessee: "", lesseeRegion: "Western Europe", tenorYears: 10, monthlyRent: 0, lrf: 0, notes: "" });
+        if (!newTx.lessee || !newTx.date || newTx.monthlyRent <= 0) return;
+        if (newTx.lrf <=0 || isNaN(newTx.lrf)) {
+            setLrfError(true);
+            return;
         }
+        setLrfError(false);
+        addTransaction(newTx);
+        setShowAddForm(false);
+        setNewTx({ date: "", aircraftType: "A320ceo", aircraftAge: 8, lessee: "", lesseeRegion: "Western Europe", tenorYears: 10, monthlyRent: 0, lrf: 0, notes: "" });
     }
 
     return (
