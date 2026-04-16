@@ -22,6 +22,7 @@ import { AppProvider } from "./AppContext";
 import { useAppContext } from "./AppContext";
 import PortfolioAnalytics from "./PortfolioAnalytics";
 import RedeliveryManager from "./RedeliveryManager";
+import ESGEmissions from "./ESGEmissions";
 import './App.css'
 
 function App() {
@@ -46,7 +47,7 @@ function App() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [editEvent, setEditEvent] = useState(null);
   const [selectedAircraft, setSelectedAircraft] = useState(null);
-  const [activeTab, setActiveTab] = useState<"portfolio" | "pricing" | "credit" | "remarketing" | "transactions" | "analytics" | "redelivery">("portfolio");
+  const [activeTab, setActiveTab] = useState<"portfolio" | "pricing" | "credit" | "remarketing" | "transactions" | "analytics" | "redelivery" | "portfolio">("esg");
   
   const [aircraft, setAircraft] = useState(["EI-ABC", "EI-DEF", "EI-GHI", "EI-JKL", "EI-MNO"]);
 
@@ -298,6 +299,12 @@ function App() {
         onClick={() => setActiveTab("redelivery")}>
           Redelivery
         </button>
+
+        <button
+        className={`tab-btn ${activeTab === "esg" ? "active" : ""}`}
+        onClick={() => setActiveTab("esg")}>
+          ESG & Emissions
+        </button>
       </nav>
 
       <div className="app-content">
@@ -308,6 +315,7 @@ function App() {
       {activeTab === "transactions" && <TransactionDatabase />}
       {activeTab === "analytics" && <PortfolioAnalytics />}
       {activeTab === "redelivery" && <RedeliveryManager prefillRegistration={redeliveryPrefill} onClearPrefill={() => setRedeliveryPrefill(null)} />}
+      {activeTab === "esg" && <ESGEmissions />}
       {activeTab === "portfolio" && (
       <div>
 
