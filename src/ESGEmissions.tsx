@@ -397,6 +397,55 @@ const safReductionTonnes = (baselineCO2kg - safScenarioCO2kg) / 1000;
                 </div>
             </div>
 
+            {/* Green Financing Eligibility */}
+            <div className="pricing-form-card" style={{ marginBottom: "24px" }}>
+                <div className="pricing-title" style={{ marginBottom: "16px" }}>Green Financing Eligibility</div>
+                <div style={{ fontSize: "12px", color: "var(--text-muted)", marginBottom: "16px" }}>
+                    EU Taxonomy alignment assessment for sustainable finance instruments. Green-aligned portfolios may qualify for preferential lending rates under EU Green Bond Standard and sustainabilty linked loans.
+                </div>
+                <div style= {{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", marginBottom: "16px" }}>
+                    <div className="kpi-card">
+                        <div className="kpi-label">Green Technology</div>
+                        <div className="kpi-value" style={{ color: "var(--green)" }}>
+                            {aircraftData.filter(a => greenTechTypes.includes(a.aircraftType)).length}
+                        </div>
+                        <div className="kpi-sub">aircraft - EU Taxonomy aligned</div>
+                    </div>
+                    <div className="kpi-card">
+                        <div className="kpi-label">Transitional</div>
+                        <div className="kpi-value" style={{ color: "var(--amber)" }}>
+                            {aircraftData.filter(a => transitionalTypes.includes(a.aircraftType)).length}
+                        </div>
+                        <div className="kpi-sub">aircraft - transitional activity</div>
+                    </div>
+                    <div className="kpi-card">
+                        <div className="kpi-label">Review Required</div>
+                        <div className="kpi-value" style={{ color: "#f97316" }}>
+                            {aircraftData.filter(a => !greenTechTypes.includes(a.aircraftType) && !transitionalTypes.includes (a.aircraftType)).length}
+                        </div>
+                        <div className="kpi-sub">aircraft - further assessment needed</div>
+                    </div>
+                </div>
+                {aircraftData.map(a => {
+                    const taxonomy = getEUTaxonomyStatus(a.aircraftType, 5);
+                    return (
+                        <div key={a.registration} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 12px", borderBottom: "1px solid var(--border)" }}>
+                            <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+                                <span style={{ fontFamily: "var(--font-mono)", fontSize: "13px", fontWeight: "600", color: "var(--text-primary)" }}>{a.registration}</span>
+                                <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>{a.aircraftType}</span>
+                                <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>{a.lessee}</span>
+                            </div>
+                            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                                <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>{taxonomy.description}</span>
+                                <span style={{ fontSize: "11px", fontWeight: "600", color: taxonomy.color, backgroundColor: "var(--bg-secondaey)", padding: "3px 10px", borderRadius: "4px", border: `1px solid ${taxonomy.color}`, whiteSpace: "nowrap" }}>
+                                    {taxonomy.label}
+                                </span>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+
             {/* ESRS E1 Disclosure Preview */}
             <div className="pricing-form-card">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
