@@ -93,6 +93,18 @@ export default function ESGEmissions() {
     const taxonomyScore = Math.round((greenCount / aircraftData.length) * 100);
 
     const currentYear = new Date().getFullYear();
+    const [carbonPrice, setCarbonPrice] = useState(75);
+    const carbonCostEuros = Math.round((totalCO2kg / 1000) * carbonPrice);
+
+    const [portfolioSAF, setPortfolioSAF] = useState<number | null>(null);
+    const baselineCO2kg = aircraftData.reduce((sum, a) =>
+    sum + calculateCO2(a.aircraftType, a.blockHours, 0), 0
+);
+const safScenarioCO2kg=portfolioSAF !== null
+? aircraftData.reduce((sum, a) =>
+sum + calculateCO2(a.aircraftType, a.blockHours, portfolioSAF), 0)
+: totalCO2kg;
+const safReductionTonnes = (baselineCO2kg - safScenarioCO2kg) / 1000;
 
     function exportPDF() {
         const rows = aircraftData.map(a => {
@@ -192,7 +204,7 @@ export default function ESGEmissions() {
                     <strong>${taxonomyScore}%</strong> of the portfolio by aircraft count is classified as EU Taxonomy-aligned
                     under Climate Delegated Act Annex I, Section 6.14 (Air transport).
                     This disclosure has been prepared in accordance with ESRS E1 Climate Change disclosure requirements
-                    under the Corporate Sustainability Reportinf Directive (CSRD).
+                    under the Corporate Sustainability Reporting Directive (CSRD).
                 </p>
                 <div class="methodology">
                     Methedology: AWG Carbon Calculator aligned · ESRS E1 compliant · Scope 3 Category 11 ·
@@ -226,7 +238,7 @@ export default function ESGEmissions() {
             {/* Report Settings */}
             <div className="pricing-form-card" style={{ marginBottom: "24px" }}>
                 <div className="pricing-title" style={{ marginBottom: "16px" }}>Report Settings</div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", maxWidth: "500px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px", maxWidth: "700px" }}>
                     <div className="form-field">
                         <label className="form-label">Company / Portfolio Name</label>
                         <input className="form-input" type="text"
@@ -239,11 +251,17 @@ export default function ESGEmissions() {
                         value={reportingYear}
                         onChange={e => setReportingYear(e.target.value)} />
                     </div>
+                    <div className="form-field">
+                        <label className="form-label">EU ETS Carbon Price (€/t)</label>
+                        <input className="form-input" type="number"
+                        value={carbonPrice}
+                        onChange={e => setCarbonPrice(parseFloat(e.target.value) || 0)} />
+                    </div>
                 </div>
             </div>
 
             {/* Portfolio KPIs */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px", marginBottom: "24px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "12px", marginBottom: "24px" }}>
                 <div className="kpi-card">
                     <div className="kpi-label">Total Scope 3 Emissions</div>
                     <div className="kpi-value" style={{ color: "var(--accent-bright)" }}>{formatTonnes(totalCO2kg)}</div>
@@ -265,6 +283,13 @@ export default function ESGEmissions() {
                     <div className="kpi-label">Avg SAF Blend</div>
                     <div className="kpi-value">{avgSAF.toFixed(1)}%</div>
                     <div className="kpi-sub">fleet average</div>
+                </div>
+                <div className="kpi-card">
+                    <div className="kpi-label">Carbon Cost Exposure</div>
+                    <div className="kpi-value" style={{ color: "#ef4444" }}>
+                        €{carbonCostEuros.toLocaleString()}
+                    </div>
+                    <div className="kpi-sub">at €{carbonPrice}/t EU ETS</div>
                 </div>
             </div>
 
@@ -322,9 +347,67 @@ export default function ESGEmissions() {
                 })}
             </div>
 
+            {/* SAF Uplift Calculator */}
+            <div className="pricing-form-card" style={{ marginBottom: "24px" }}>
+                <div className="pricing-title" style={{ marginBottom: "16px" }}>SAF Uplift Scenario - ReFuelEU Aviation</div>
+                <div style={{ fontSize: "12px", color: "var(--text-muted)", marginBottom: "16px" }}>
+                    Simulate the emissions impact of increasing SAF blend across the full portfolio. ReFuelEu mandates 2% SAF by 2025, rising to 6% by 2030 and 70% by 2050.
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px", alignItems: "center", marginBottom: "16px" }}>
+                    <div>
+                        <label className="form-label">Portfolio SAF Blend Scenario</label>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginTop: "8px" }}>
+                            <input
+                            type="range" min="0" max="100" step="1"
+                            value={portfolioSAF ?? avgSAF}
+                            onChange={e => setPortfolioSAF(parseFloat(e.target.value))}
+                            style={{ flex: 1}}
+                            />
+                            <span style={{ fontFamily: "var(--font-mono)", fontSize: "14px", fontWeight: "600", color: "var(--accent-bright)", minWidth: "45px" }}>
+                                {(portfolioSAF ?? avgSAF).toFixed(0)}%
+                            </span>
+                        </div>
+                    </div>
+                    <div className="kpi-card">
+                        <div className="kpi-label">Scenario Emissions</div>
+                        <div className="kpi-value" style={{ fontSize: "18px", color: "var(--accent-bright)" }}>
+                            {formatTonnes(safScenarioCO2kg)}
+                        </div>
+                        <div className="kpi-sub">CO₂ equivalent</div>
+                    </div>
+                    <div className="kpi-card">
+                        <div className="kpi-label">CO₂ Reduction vs Baseline</div>
+                        <div className="kpi-value" style={{ fontSize: "18px", color: safReductionTonnes > 0 ? "var(--green)" : "var(--text-muted)" }}>
+                            {safReductionTonnes > 0 ? "-" : ""}{Math.abs(safReductionTonnes).toFixed(1)}t
+                        </div>
+                        <div className="kpi-sub">vs 0% SAF baseline</div>
+                    </div>
+                </div>
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                    {[2, 6, 10, 20, 50, 70].map(pct => (
+                        <button
+                        key={pct}
+                        className="export-btn"
+                        onClick={() => setPortfolioSAF(pct)}
+                        style={portfolioSAF === pct ? { backgroundColor: "var(--accent-bright)", color: "#fff", borderColor: "var(--accent-bright)" } :{}}
+                        >
+                            {pct}% {pct === 2 ? "(2025 mandate)" : pct === 6 ? "(2030 mandate)" : pct === 70 ? "(2050 target)" : ""}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
             {/* ESRS E1 Disclosure Preview */}
             <div className="pricing-form-card">
-                <div className="pricing-title" style={{ marginBottom: "16px" }}>ESTS E1 Disclosure Snippet</div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+                    <div className="pricing-title" style={{ marginBottom: 0 }}>ESRS E1 Disclosure Snippet</div>
+                    <button className="export-btn" onClick={() => {
+                        const text = `In the financial year ${reportingYear}, ${companyName} reported total Scope 3 Category 11 (use of sold products) greenhouse gas emissions of ${formatTonnes(totalCO2kg)} CO₂e across a fleet of ${aircraftData.length} aircraft totalling ${totalBlockHours.toLocaleString()} block hours. Emissions have been calculated using fuel burn coefficients aligned with Aviation Working Group (AWG) Carbon Calculator methodology, applying a CO₂ conversion factof of 3.16 kg CO₂ per kg of Jet A-1 fuel consumed. Sustainable Aviation Fuel (SAF) blending across the portfolio averaged ${avgSAF.toFixed(1)}%, delivering an estimated emissions reduction based on an 80% lifecycle CO₂ reduction factor for SAF versus conventional jet fuel. ${taxonomyScore}% of the portfolio by aircraft count is classified as EU Taxonomy-aligned under Climate Delegated Act Annex I, Section 6.14 (Air transport). This disclosure has been prepared in accordance with ESRS E1 Climate Change disclosure requirements under the corporate Sustainability Reporting Directive (CSRD).`;
+                        navigator.clipboard.writeText(text);
+                    }}>
+                        Copy to Clipboard
+                    </button>
+                </div>
                 <div style={{ fontSize: "11px", color: "var(--text-muted)", marginBottom: "12px", fontFamily: "var(--font-mono)", letterSpacing: "0.06em" }}>
                     SCOPE 3 CATEGORY 11 · CSRD COMPLIANT · AWG METHODOLOGY
                 </div>
